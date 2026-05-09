@@ -1,0 +1,28 @@
+@model InterviewFeedback
+
+@{
+    ViewData["Title"] = "Деталі відгуку";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h2 mb-0">Відгук #@Model.Id</h1>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Кандидат</dt>
+    <dd class="col-sm-9">@Model.Interview?.Application?.Candidate?.FullName</dd>
+    <dt class="col-sm-3">Вакансія</dt>
+    <dd class="col-sm-9">@Model.Interview?.Application?.Vacancy?.Title</dd>
+    <dt class="col-sm-3">Оцінка</dt>
+    <dd class="col-sm-9">@Model.Score/10</dd>
+    <dt class="col-sm-3">Рекомендація</dt>
+    <dd class="col-sm-9">@Model.Recommendation</dd>
+    <dt class="col-sm-3">Коментар</dt>
+    <dd class="col-sm-9">@Model.Comment</dd>
+    <dt class="col-sm-3">Створено</dt>
+    <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
+</dl>

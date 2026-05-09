@@ -1,0 +1,7 @@
+bin/
+obj/
+hrreserve.db
+hrreserve.db-shm
+hrreserve.db-wal
+*.user
+*.suo

@@ -1,0 +1,55 @@
+@model SoftSkillAssessment
+
+@{
+    ViewData["Title"] = "Нова оцінка soft skills";
+}
+
+<h1 class="h2 mb-3">Нова оцінка soft skills</h1>
+
+<form asp-action="Create" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-6">
+        <label asp-for="CandidateId" class="form-label"></label>
+        <select asp-for="CandidateId" class="form-select" asp-items="ViewBag.CandidateId"></select>
+        <span asp-validation-for="CandidateId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6"></div>
+    <div class="col-md-4">
+        <label asp-for="Communication" class="form-label"></label>
+        <input asp-for="Communication" class="form-control" min="1" max="10" />
+        <span asp-validation-for="Communication" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Teamwork" class="form-label"></label>
+        <input asp-for="Teamwork" class="form-control" min="1" max="10" />
+        <span asp-validation-for="Teamwork" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Responsibility" class="form-label"></label>
+        <input asp-for="Responsibility" class="form-control" min="1" max="10" />
+        <span asp-validation-for="Responsibility" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="StressResistance" class="form-label"></label>
+        <input asp-for="StressResistance" class="form-control" min="1" max="10" />
+        <span asp-validation-for="StressResistance" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Leadership" class="form-label"></label>
+        <input asp-for="Leadership" class="form-control" min="1" max="10" />
+        <span asp-validation-for="Leadership" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="OverallComment" class="form-label"></label>
+        <textarea asp-for="OverallComment" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="OverallComment" class="text-danger"></span>
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,45 @@
+@model HRReserveSystem.Models.Application
+
+@{
+    ViewData["Title"] = "Деталі заявки";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h2 mb-0">Заявка #@Model.Id</h1>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Кандидат</dt>
+    <dd class="col-sm-9">@Model.Candidate?.FullName</dd>
+    <dt class="col-sm-3">Вакансія</dt>
+    <dd class="col-sm-9">@Model.Vacancy?.Title</dd>
+    <dt class="col-sm-3">Статус</dt>
+    <dd class="col-sm-9">@Model.Status</dd>
+    <dt class="col-sm-3">Дата подачі</dt>
+    <dd class="col-sm-9">@Model.AppliedAt.ToLocalTime().ToString("g")</dd>
+</dl>
+
+<h2 class="h5 mt-4">Співбесіди</h2>
+<table class="table table-sm align-middle">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Тип</th>
+            <th>Результат</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var interview in Model.Interviews)
+    {
+        <tr>
+            <td>@interview.InterviewDate.ToString("g")</td>
+            <td>@interview.InterviewType</td>
+            <td>@interview.Result</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,28 @@
+@model SoftSkillAssessment
+
+@{
+    ViewData["Title"] = "Деталі soft skills";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h2 mb-0">@Model.Candidate?.FullName</h1>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Комунікація</dt>
+    <dd class="col-sm-9">@Model.Communication/10</dd>
+    <dt class="col-sm-3">Командна робота</dt>
+    <dd class="col-sm-9">@Model.Teamwork/10</dd>
+    <dt class="col-sm-3">Відповідальність</dt>
+    <dd class="col-sm-9">@Model.Responsibility/10</dd>
+    <dt class="col-sm-3">Стресостійкість</dt>
+    <dd class="col-sm-9">@Model.StressResistance/10</dd>
+    <dt class="col-sm-3">Лідерство</dt>
+    <dd class="col-sm-9">@Model.Leadership/10</dd>
+    <dt class="col-sm-3">Коментар</dt>
+    <dd class="col-sm-9">@Model.OverallComment</dd>
+</dl>

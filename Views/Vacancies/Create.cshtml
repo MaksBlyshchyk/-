@@ -1,0 +1,53 @@
+@model Vacancy
+
+@{
+    ViewData["Title"] = "Нова вакансія";
+}
+
+<h1 class="h2 mb-3">Нова вакансія</h1>
+
+<form asp-action="Create" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-8">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select">
+            <option value="Open">Open</option>
+            <option value="Paused">Paused</option>
+            <option value="Closed">Closed</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SalaryMin" class="form-label"></label>
+        <input asp-for="SalaryMin" class="form-control" />
+        <span asp-validation-for="SalaryMin" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SalaryMax" class="form-label"></label>
+        <input asp-for="SalaryMax" class="form-control" />
+        <span asp-validation-for="SalaryMax" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Requirements" class="form-label"></label>
+        <textarea asp-for="Requirements" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Requirements" class="text-danger"></span>
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

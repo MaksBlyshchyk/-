@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRReserveSystem", "HRReserveSystem.csproj", "{4EA1E41F-051E-DBFB-19E1-F787E0C448A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4EA1E41F-051E-DBFB-19E1-F787E0C448A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA1E41F-051E-DBFB-19E1-F787E0C448A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EA1E41F-051E-DBFB-19E1-F787E0C448A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA1E41F-051E-DBFB-19E1-F787E0C448A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3D88985-B8B6-4BE1-B893-EDCD990208B8}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,300 @@
+using HRReserveSystem.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#nullable disable
+
+namespace HRReserveSystem.Migrations;
+
+[DbContext(typeof(ApplicationDbContext))]
+partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+{
+    protected override void BuildModel(ModelBuilder modelBuilder)
+    {
+#pragma warning disable 612, 618
+        modelBuilder.HasAnnotation("ProductVersion", "8.0.17");
+
+        modelBuilder.Entity("HRReserveSystem.Models.Application", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<DateTime>("AppliedAt")
+                .HasColumnType("TEXT");
+
+            b.Property<int>("CandidateId")
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("Status")
+                .IsRequired()
+                .HasMaxLength(40)
+                .HasColumnType("TEXT");
+
+            b.Property<int>("VacancyId")
+                .HasColumnType("INTEGER");
+
+            b.HasKey("Id");
+
+            b.HasIndex("CandidateId");
+
+            b.HasIndex("VacancyId");
+
+            b.ToTable("Applications");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Candidate", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<DateTime>("CreatedAt")
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Email")
+                .IsRequired()
+                .HasMaxLength(160)
+                .HasColumnType("TEXT");
+
+            b.Property<int>("ExperienceYears")
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("FullName")
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Phone")
+                .HasMaxLength(40)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Skills")
+                .IsRequired()
+                .HasMaxLength(1000)
+                .HasColumnType("TEXT");
+
+            b.HasKey("Id");
+
+            b.HasIndex("Email")
+                .IsUnique();
+
+            b.ToTable("Candidates");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Interview", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("ApplicationId")
+                .HasColumnType("INTEGER");
+
+            b.Property<DateTime>("InterviewDate")
+                .HasColumnType("TEXT");
+
+            b.Property<string>("InterviewType")
+                .IsRequired()
+                .HasMaxLength(80)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Notes")
+                .HasMaxLength(2000)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Result")
+                .IsRequired()
+                .HasMaxLength(80)
+                .HasColumnType("TEXT");
+
+            b.HasKey("Id");
+
+            b.HasIndex("ApplicationId");
+
+            b.ToTable("Interviews");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.InterviewFeedback", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("Comment")
+                .IsRequired()
+                .HasMaxLength(2000)
+                .HasColumnType("TEXT");
+
+            b.Property<DateTime>("CreatedAt")
+                .HasColumnType("TEXT");
+
+            b.Property<int>("InterviewId")
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("Recommendation")
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnType("TEXT");
+
+            b.Property<int>("Score")
+                .HasColumnType("INTEGER");
+
+            b.HasKey("Id");
+
+            b.HasIndex("InterviewId");
+
+            b.ToTable("InterviewFeedbacks");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.SoftSkillAssessment", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("CandidateId")
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("Communication")
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("Leadership")
+                .HasColumnType("INTEGER");
+
+            b.Property<string>("OverallComment")
+                .HasMaxLength(2000)
+                .HasColumnType("TEXT");
+
+            b.Property<int>("Responsibility")
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("StressResistance")
+                .HasColumnType("INTEGER");
+
+            b.Property<int>("Teamwork")
+                .HasColumnType("INTEGER");
+
+            b.HasKey("Id");
+
+            b.HasIndex("CandidateId");
+
+            b.ToTable("SoftSkillAssessments");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Vacancy", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<DateTime>("CreatedAt")
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Description")
+                .IsRequired()
+                .HasMaxLength(2000)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Requirements")
+                .IsRequired()
+                .HasMaxLength(2000)
+                .HasColumnType("TEXT");
+
+            b.Property<decimal>("SalaryMax")
+                .HasColumnType("TEXT");
+
+            b.Property<decimal>("SalaryMin")
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Status")
+                .IsRequired()
+                .HasMaxLength(40)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Title")
+                .IsRequired()
+                .HasMaxLength(160)
+                .HasColumnType("TEXT");
+
+            b.HasKey("Id");
+
+            b.ToTable("Vacancies");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Application", b =>
+        {
+            b.HasOne("HRReserveSystem.Models.Candidate", "Candidate")
+                .WithMany("Applications")
+                .HasForeignKey("CandidateId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.HasOne("HRReserveSystem.Models.Vacancy", "Vacancy")
+                .WithMany("Applications")
+                .HasForeignKey("VacancyId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Candidate");
+
+            b.Navigation("Vacancy");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Interview", b =>
+        {
+            b.HasOne("HRReserveSystem.Models.Application", "Application")
+                .WithMany("Interviews")
+                .HasForeignKey("ApplicationId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Application");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.InterviewFeedback", b =>
+        {
+            b.HasOne("HRReserveSystem.Models.Interview", "Interview")
+                .WithMany("Feedbacks")
+                .HasForeignKey("InterviewId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Interview");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.SoftSkillAssessment", b =>
+        {
+            b.HasOne("HRReserveSystem.Models.Candidate", "Candidate")
+                .WithMany("SoftSkillAssessments")
+                .HasForeignKey("CandidateId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Candidate");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Application", b =>
+        {
+            b.Navigation("Interviews");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Candidate", b =>
+        {
+            b.Navigation("Applications");
+
+            b.Navigation("SoftSkillAssessments");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Interview", b =>
+        {
+            b.Navigation("Feedbacks");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Vacancy", b =>
+        {
+            b.Navigation("Applications");
+        });
+#pragma warning restore 612, 618
+    }
+}

@@ -1,0 +1,40 @@
+@model HRReserveSystem.Models.Application
+
+@{
+    ViewData["Title"] = "Нова заявка";
+}
+
+<h1 class="h2 mb-3">Нова заявка</h1>
+
+<form asp-action="Create" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-6">
+        <label asp-for="CandidateId" class="form-label"></label>
+        <select asp-for="CandidateId" class="form-select" asp-items="ViewBag.CandidateId"></select>
+        <span asp-validation-for="CandidateId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="VacancyId" class="form-label"></label>
+        <select asp-for="VacancyId" class="form-select" asp-items="ViewBag.VacancyId"></select>
+        <span asp-validation-for="VacancyId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select">
+            <option value="New">New</option>
+            <option value="In review">In review</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

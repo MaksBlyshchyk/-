@@ -1,0 +1,21 @@
+@model Interview
+
+@{
+    ViewData["Title"] = "Видалити співбесіду";
+}
+
+<h1 class="h2 mb-3">Видалити співбесіду</h1>
+<div class="alert alert-warning">Підтвердіть видалення співбесіди для <strong>@Model.Application?.Candidate?.FullName</strong>.</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Дата</dt>
+    <dd class="col-sm-9">@Model.InterviewDate.ToString("g")</dd>
+    <dt class="col-sm-3">Тип</dt>
+    <dd class="col-sm-9">@Model.InterviewType</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+</form>

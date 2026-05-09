@@ -1,0 +1,55 @@
+@model Interview
+
+@{
+    ViewData["Title"] = "Редагувати співбесіду";
+}
+
+<h1 class="h2 mb-3">Редагувати співбесіду</h1>
+
+<form asp-action="Edit" class="row g-3">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-6">
+        <label asp-for="ApplicationId" class="form-label"></label>
+        <select asp-for="ApplicationId" class="form-select" asp-items="ViewBag.ApplicationId"></select>
+        <span asp-validation-for="ApplicationId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="InterviewDate" class="form-label"></label>
+        <input asp-for="InterviewDate" class="form-control" type="datetime-local" />
+        <span asp-validation-for="InterviewDate" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="InterviewType" class="form-label"></label>
+        <select asp-for="InterviewType" class="form-select">
+            <option value="HR screening">HR screening</option>
+            <option value="Technical">Technical</option>
+            <option value="Final">Final</option>
+            <option value="Online">Online</option>
+        </select>
+        <span asp-validation-for="InterviewType" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Result" class="form-label"></label>
+        <select asp-for="Result" class="form-select">
+            <option value="Planned">Planned</option>
+            <option value="Passed">Passed</option>
+            <option value="Failed">Failed</option>
+            <option value="Rescheduled">Rescheduled</option>
+        </select>
+        <span asp-validation-for="Result" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

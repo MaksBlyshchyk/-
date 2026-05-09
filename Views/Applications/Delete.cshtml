@@ -1,0 +1,14 @@
+@model HRReserveSystem.Models.Application
+
+@{
+    ViewData["Title"] = "Видалити заявку";
+}
+
+<h1 class="h2 mb-3">Видалити заявку</h1>
+<div class="alert alert-warning">Підтвердіть видалення заявки кандидата <strong>@Model.Candidate?.FullName</strong> на вакансію <strong>@Model.Vacancy?.Title</strong>.</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+</form>

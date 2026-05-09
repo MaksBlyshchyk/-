@@ -1,0 +1,140 @@
+@model HRReserveSystem.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">Dashboard кадрового резерву</h1>
+        <p class="text-muted mb-0">Аналітичний огляд кандидатів, вакансій, заявок і співбесід для рекрутера.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" asp-controller="Candidates" asp-action="Create">Додати кандидата</a>
+        <a class="btn btn-outline-primary" asp-controller="Vacancies" asp-action="Create">Додати вакансію</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Кандидати</div>
+                <div class="display-6 fw-semibold">@Model.CandidateCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Вакансії</div>
+                <div class="display-6 fw-semibold">@Model.VacancyCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Заявки</div>
+                <div class="display-6 fw-semibold">@Model.ApplicationCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Співбесіди</div>
+                <div class="display-6 fw-semibold">@Model.InterviewCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100 border-success-subtle">
+            <div class="card-body">
+                <div class="text-success small text-uppercase">Прийняті</div>
+                <div class="display-6 fw-semibold">@Model.AcceptedCandidateCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100 border-danger-subtle">
+            <div class="card-body">
+                <div class="text-danger small text-uppercase">Відхилені</div>
+                <div class="display-6 fw-semibold">@Model.RejectedCandidateCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Останні 5 кандидатів</h2>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="Candidates" asp-action="Index">Усі кандидати</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ПІБ</th>
+                            <th>Email</th>
+                            <th>Досвід</th>
+                            <th>Створено</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var candidate in Model.RecentCandidates)
+                    {
+                        <tr>
+                            <td><a asp-controller="Candidates" asp-action="Details" asp-route-id="@candidate.Id">@candidate.FullName</a></td>
+                            <td>@candidate.Email</td>
+                            <td><span class="badge text-bg-info">@candidate.ExperienceYears р.</span></td>
+                            <td>@candidate.CreatedAt.ToLocalTime().ToString("d")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Останні 5 вакансій</h2>
+                <a class="btn btn-sm btn-outline-secondary" asp-controller="Vacancies" asp-action="Index">Усі вакансії</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Назва</th>
+                            <th>Статус</th>
+                            <th>Зарплата</th>
+                            <th>Створено</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var vacancy in Model.RecentVacancies)
+                    {
+                        var badgeClass = vacancy.Status switch
+                        {
+                            "Open" => "text-bg-success",
+                            "Paused" => "text-bg-warning",
+                            "Closed" => "text-bg-secondary",
+                            _ => "text-bg-primary"
+                        };
+
+                        <tr>
+                            <td><a asp-controller="Vacancies" asp-action="Details" asp-route-id="@vacancy.Id">@vacancy.Title</a></td>
+                            <td><span class="badge @badgeClass">@vacancy.Status</span></td>
+                            <td>@vacancy.SalaryMin - @vacancy.SalaryMax</td>
+                            <td>@vacancy.CreatedAt.ToLocalTime().ToString("d")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

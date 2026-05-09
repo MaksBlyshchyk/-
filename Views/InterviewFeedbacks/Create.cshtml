@@ -1,0 +1,44 @@
+@model InterviewFeedback
+
+@{
+    ViewData["Title"] = "Новий відгук";
+}
+
+<h1 class="h2 mb-3">Новий відгук</h1>
+
+<form asp-action="Create" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-8">
+        <label asp-for="InterviewId" class="form-label"></label>
+        <select asp-for="InterviewId" class="form-select" asp-items="ViewBag.InterviewId"></select>
+        <span asp-validation-for="InterviewId" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Score" class="form-label"></label>
+        <input asp-for="Score" class="form-control" min="1" max="10" />
+        <span asp-validation-for="Score" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Recommendation" class="form-label"></label>
+        <select asp-for="Recommendation" class="form-select">
+            <option value="Hire">Hire</option>
+            <option value="Reserve">Reserve</option>
+            <option value="Reject">Reject</option>
+            <option value="Need more interviews">Need more interviews</option>
+        </select>
+        <span asp-validation-for="Recommendation" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Comment" class="form-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
