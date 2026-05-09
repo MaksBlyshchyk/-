@@ -1,11 +1,13 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize(Roles = "Admin,Recruiter,Interviewer")]
 public class InterviewFeedbacksController(ApplicationDbContext context) : Controller
 {
     public async Task<IActionResult> Index()
@@ -44,10 +46,10 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return feedback is null ? NotFound() : View(feedback);
     }
 
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(int? interviewId)
     {
-        await PopulateInterviewsSelectList();
-        return View(new InterviewFeedback());
+        await PopulateInterviewsSelectList(interviewId);
+        return View(new InterviewFeedback { InterviewId = interviewId ?? 0 });
     }
 
     [HttpPost]
@@ -67,6 +69,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id is null)
@@ -84,6 +87,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return View(feedback);
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,InterviewId,Comment,Score,Recommendation,CreatedAt")] InterviewFeedback feedback)
@@ -117,6 +121,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)
@@ -137,6 +142,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return feedback is null ? NotFound() : View(feedback);
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)

@@ -5,55 +5,79 @@
 }
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-    <h1 class="h2 mb-0">Вакансії</h1>
-    <a class="btn btn-primary" asp-action="Create">Додати вакансію</a>
+    <div>
+        <h1 class="h2 mb-1">Вакансії</h1>
+        <p class="text-muted mb-0">Відкриті, призупинені та закриті позиції компанії.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
 </div>
 
-<form asp-action="Index" method="get" class="row g-2 mb-3">
-    <div class="col-md-6">
-        <input class="form-control" type="search" name="search" value="@ViewData["CurrentFilter"]" placeholder="Пошук за назвою, описом або вимогами" />
-    </div>
-    <div class="col-auto">
-        <button class="btn btn-outline-secondary" type="submit">Пошук</button>
+<form asp-action="Index" method="get" class="card mb-3">
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-lg-6">
+            <label class="form-label" for="vacancySearch">Пошук</label>
+            <input id="vacancySearch" class="form-control" type="search" name="search" value="@ViewData["CurrentFilter"]" placeholder="Назва вакансії" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <label class="form-label" for="status">Статус</label>
+            <select id="status" class="form-select" name="status" asp-items="ViewBag.Statuses">
+                <option value="">Усі статуси</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-3 d-flex gap-2">
+            <button class="btn btn-outline-primary flex-fill" type="submit">Фільтрувати</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Скинути</a>
+        </div>
     </div>
 </form>
 
 <div class="card">
-    <div class="table-responsive">
-    <table class="table table-striped table-hover align-middle mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Назва</th>
-                <th>Статус</th>
-                <th>Зарплата</th>
-                <th>Створено</th>
-                <th class="text-end">Дії</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            var badgeClass = item.Status switch
-            {
-                "Open" => "text-bg-success",
-                "Paused" => "text-bg-warning",
-                "Closed" => "text-bg-secondary",
-                _ => "text-bg-primary"
-            };
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Назва</th>
+                        <th>Статус</th>
+                        <th>Зарплата</th>
+                        <th>Створено</th>
+                        <th class="text-end">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    var badgeClass = item.Status switch
+                    {
+                        "Open" => "text-bg-success",
+                        "Paused" => "text-bg-warning",
+                        "Closed" => "text-bg-secondary",
+                        _ => "text-bg-primary"
+                    };
 
-            <tr>
-                <td>@item.Title</td>
-                <td><span class="badge @badgeClass">@item.Status</span></td>
-                <td>@item.SalaryMin - @item.SalaryMax</td>
-                <td>@item.CreatedAt.ToLocalTime().ToString("d")</td>
-                <td class="text-end text-nowrap">
-                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
-                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id">Деталі</a>
-                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-    </div>
+                    <tr>
+                        <td class="fw-semibold">@item.Title</td>
+                        <td><span class="badge @badgeClass">@item.Status</span></td>
+                        <td>@item.SalaryMin - @item.SalaryMax</td>
+                        <td>@item.CreatedAt.ToLocalTime().ToString("d")</td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Edit</a>
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Details</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Delete</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <h2 class="h5">Вакансій не знайдено</h2>
+            <p class="text-muted mb-3">Змініть фільтри або додайте першу вакансію.</p>
+            <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
+        </div>
+    }
 </div>

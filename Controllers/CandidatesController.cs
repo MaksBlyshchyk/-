@@ -1,13 +1,15 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize(Roles = "Admin,Recruiter")]
 public class CandidatesController(ApplicationDbContext context) : Controller
 {
-    public async Task<IActionResult> Index(string? search)
+    public async Task<IActionResult> Index(string? search, int? minExperience)
     {
         var candidates = context.Candidates.AsNoTracking();
 
@@ -19,7 +21,13 @@ public class CandidatesController(ApplicationDbContext context) : Controller
                 candidate.Skills.Contains(search));
         }
 
+        if (minExperience.HasValue)
+        {
+            candidates = candidates.Where(candidate => candidate.ExperienceYears >= minExperience.Value);
+        }
+
         ViewData["CurrentFilter"] = search;
+        ViewData["MinExperience"] = minExperience;
 
         return View(await candidates
             .OrderBy(candidate => candidate.FullName)

@@ -2,11 +2,13 @@ using System.Diagnostics;
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
 using HRReserveSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -48,12 +50,23 @@ public class HomeController : Controller
                 .AsNoTracking()
                 .OrderByDescending(vacancy => vacancy.CreatedAt)
                 .Take(5)
+                .ToListAsync(),
+            UpcomingInterviews = await _context.Interviews
+                .AsNoTracking()
+                .Include(interview => interview.Application)
+                    .ThenInclude(application => application!.Candidate)
+                .Include(interview => interview.Application)
+                    .ThenInclude(application => application!.Vacancy)
+                .Where(interview => interview.InterviewDate >= DateTime.Now)
+                .OrderBy(interview => interview.InterviewDate)
+                .Take(5)
                 .ToListAsync()
         };
 
         return View(dashboard);
     }
 
+    [AllowAnonymous]
     public IActionResult About()
     {
         return View();
@@ -64,6 +77,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [AllowAnonymous]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

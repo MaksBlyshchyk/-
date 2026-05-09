@@ -19,11 +19,39 @@ html {
 
 body {
   margin-bottom: 60px;
-  background-color: #f7f8fa;
+  background: #f4f6f9;
 }
 
 main {
-  padding-top: 0.75rem;
+  padding-top: 1.25rem;
+}
+
+.app-container {
+  max-width: 1440px;
+}
+
+.navbar {
+  min-height: 64px;
+}
+
+.navbar-brand {
+  letter-spacing: 0;
+}
+
+.nav-link {
+  border-radius: 0.5rem;
+}
+
+.nav-link:hover {
+  background-color: #f1f5f9;
+}
+
+.dashboard-hero {
+  background: #fff;
+  border: 1px solid #e3e7ed;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(16, 24, 40, 0.05);
+  padding: 1.25rem;
 }
 
 .card {
@@ -34,6 +62,10 @@ main {
 
 .dashboard-card .card-body {
   min-height: 112px;
+}
+
+.login-card {
+  margin-top: 2rem;
 }
 
 .badge {
@@ -48,6 +80,37 @@ main {
   color: #475467;
   font-size: 0.875rem;
   font-weight: 700;
+}
+
+.empty-state {
+  color: #667085;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+main > form.row.g-3 {
+  background: #fff;
+  border: 1px solid #e3e7ed;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 0.75rem rgba(16, 24, 40, 0.04);
+  padding: 1rem;
+}
+
+.form-control,
+.form-select {
+  border-color: #d0d5dd;
+}
+
+.btn {
+  border-radius: 0.45rem;
+}
+
+.btn [aria-hidden="true"] {
+  display: inline-block;
+  font-weight: 700;
+  margin-right: 0.25rem;
+  min-width: 0.75rem;
+  text-align: center;
 }
 
 textarea {

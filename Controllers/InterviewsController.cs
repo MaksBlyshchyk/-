@@ -1,11 +1,13 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize(Roles = "Admin,Recruiter,Interviewer")]
 public class InterviewsController(ApplicationDbContext context) : Controller
 {
     public async Task<IActionResult> Index()
@@ -41,12 +43,14 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return interview is null ? NotFound() : View(interview);
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     public async Task<IActionResult> Create()
     {
         await PopulateApplicationsSelectList();
         return View(new Interview { InterviewDate = DateTime.Now });
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("ApplicationId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
@@ -63,6 +67,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id is null)
@@ -80,6 +85,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return View(interview);
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,ApplicationId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
@@ -113,6 +119,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)
@@ -131,6 +138,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return interview is null ? NotFound() : View(interview);
     }
 
+    [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)

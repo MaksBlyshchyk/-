@@ -1,19 +1,38 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize(Roles = "Admin,Recruiter")]
 public class ApplicationsController(ApplicationDbContext context) : Controller
 {
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? status)
     {
-        var applications = context.Applications
+        IQueryable<Application> applications = context.Applications
             .AsNoTracking()
             .Include(application => application.Candidate)
             .Include(application => application.Vacancy);
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            applications = applications.Where(application => application.Status == status);
+        }
+
+        ViewData["StatusFilter"] = status;
+        ViewData["Statuses"] = new SelectList(new[]
+        {
+            "New",
+            "In review",
+            "Interview",
+            "Offer",
+            "Accepted",
+            "Hired",
+            "Rejected"
+        }, status);
 
         return View(await applications
             .OrderByDescending(application => application.AppliedAt)

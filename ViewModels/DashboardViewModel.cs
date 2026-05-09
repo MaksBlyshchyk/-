@@ -19,4 +19,6 @@ public class DashboardViewModel
     public IReadOnlyList<Candidate> RecentCandidates { get; set; } = [];
 
     public IReadOnlyList<Vacancy> RecentVacancies { get; set; } = [];
+
+    public IReadOnlyList<Interview> UpcomingInterviews { get; set; } = [];
 }

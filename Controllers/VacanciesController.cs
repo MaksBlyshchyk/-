@@ -1,25 +1,32 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
+[Authorize(Roles = "Admin,Recruiter")]
 public class VacanciesController(ApplicationDbContext context) : Controller
 {
-    public async Task<IActionResult> Index(string? search)
+    public async Task<IActionResult> Index(string? search, string? status)
     {
         var vacancies = context.Vacancies.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            vacancies = vacancies.Where(vacancy =>
-                vacancy.Title.Contains(search) ||
-                vacancy.Description.Contains(search) ||
-                vacancy.Requirements.Contains(search));
+            vacancies = vacancies.Where(vacancy => vacancy.Title.Contains(search));
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            vacancies = vacancies.Where(vacancy => vacancy.Status == status);
         }
 
         ViewData["CurrentFilter"] = search;
+        ViewData["StatusFilter"] = status;
+        ViewData["Statuses"] = new SelectList(new[] { "Open", "Paused", "Closed" }, status);
 
         return View(await vacancies
             .OrderByDescending(vacancy => vacancy.CreatedAt)

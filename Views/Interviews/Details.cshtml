@@ -4,46 +4,67 @@
     ViewData["Title"] = "Деталі співбесіди";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
     <h1 class="h2 mb-0">Співбесіда #@Model.Id</h1>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-success" asp-controller="InterviewFeedbacks" asp-action="Create" asp-route-interviewId="@Model.Id"><span aria-hidden="true">+</span> Додати відгук</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+        {
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        }
         <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
     </div>
 </div>
 
-<dl class="row">
-    <dt class="col-sm-3">Кандидат</dt>
-    <dd class="col-sm-9">@Model.Application?.Candidate?.FullName</dd>
-    <dt class="col-sm-3">Вакансія</dt>
-    <dd class="col-sm-9">@Model.Application?.Vacancy?.Title</dd>
-    <dt class="col-sm-3">Дата</dt>
-    <dd class="col-sm-9">@Model.InterviewDate.ToString("g")</dd>
-    <dt class="col-sm-3">Тип</dt>
-    <dd class="col-sm-9">@Model.InterviewType</dd>
-    <dt class="col-sm-3">Результат</dt>
-    <dd class="col-sm-9">@Model.Result</dd>
-    <dt class="col-sm-3">Нотатки</dt>
-    <dd class="col-sm-9">@Model.Notes</dd>
-</dl>
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Кандидат</dt>
+            <dd class="col-sm-9">@Model.Application?.Candidate?.FullName</dd>
+            <dt class="col-sm-3">Вакансія</dt>
+            <dd class="col-sm-9">@Model.Application?.Vacancy?.Title</dd>
+            <dt class="col-sm-3">Дата</dt>
+            <dd class="col-sm-9">@Model.InterviewDate.ToString("g")</dd>
+            <dt class="col-sm-3">Тип</dt>
+            <dd class="col-sm-9">@Model.InterviewType</dd>
+            <dt class="col-sm-3">Результат</dt>
+            <dd class="col-sm-9"><span class="badge text-bg-primary">@Model.Result</span></dd>
+            <dt class="col-sm-3">Нотатки</dt>
+            <dd class="col-sm-9">@Model.Notes</dd>
+        </dl>
+    </div>
+</div>
 
-<h2 class="h5 mt-4">Відгуки</h2>
-<table class="table table-sm align-middle">
-    <thead>
-        <tr>
-            <th>Оцінка</th>
-            <th>Рекомендація</th>
-            <th>Коментар</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var feedback in Model.Feedbacks)
+<div class="card">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Відгуки</h2>
+    </div>
+    @if (Model.Feedbacks.Any())
     {
-        <tr>
-            <td>@feedback.Score</td>
-            <td>@feedback.Recommendation</td>
-            <td>@feedback.Comment</td>
-        </tr>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Оцінка</th>
+                        <th>Рекомендація</th>
+                        <th>Коментар</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var feedback in Model.Feedbacks)
+                {
+                    <tr>
+                        <td><span class="badge text-bg-info">@feedback.Score/10</span></td>
+                        <td>@feedback.Recommendation</td>
+                        <td>@feedback.Comment</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
-    </tbody>
-</table>
+    else
+    {
+        <div class="empty-state">Відгуків для цієї співбесіди ще немає.</div>
+    }
+</div>
