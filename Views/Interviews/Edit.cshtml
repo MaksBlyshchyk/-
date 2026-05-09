@@ -15,6 +15,13 @@
         <span asp-validation-for="ApplicationId" class="text-danger"></span>
     </div>
     <div class="col-md-6">
+        <label asp-for="RecruiterId" class="form-label"></label>
+        <select asp-for="RecruiterId" class="form-select" asp-items="ViewBag.RecruiterId">
+            <option value="">Не призначено</option>
+        </select>
+        <span asp-validation-for="RecruiterId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
         <label asp-for="InterviewDate" class="form-label"></label>
         <input asp-for="InterviewDate" class="form-control" type="datetime-local" />
         <span asp-validation-for="InterviewDate" class="text-danger"></span>

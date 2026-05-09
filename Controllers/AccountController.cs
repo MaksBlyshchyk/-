@@ -11,14 +11,14 @@ namespace HRReserveSystem.Controllers;
 public class AccountController(DemoUserService demoUserService) : Controller
 {
     [AllowAnonymous]
-    public IActionResult Login(string? returnUrl = null)
+    public async Task<IActionResult> Login(string? returnUrl = null)
     {
         if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Index", "Home");
         }
 
-        ViewData["DemoUsers"] = demoUserService.GetDemoUsers();
+        ViewData["DemoUsers"] = await demoUserService.GetDemoUsersAsync();
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
@@ -27,14 +27,14 @@ public class AccountController(DemoUserService demoUserService) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        ViewData["DemoUsers"] = demoUserService.GetDemoUsers();
+        ViewData["DemoUsers"] = await demoUserService.GetDemoUsersAsync();
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var user = demoUserService.ValidateUser(model.Login, model.Password);
+        var user = await demoUserService.ValidateUserAsync(model.Login, model.Password);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, "Невірний логін або пароль.");
@@ -43,9 +43,10 @@ public class AccountController(DemoUserService demoUserService) : Controller
 
         var claims = new List<Claim>
         {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Login),
             new(ClaimTypes.Role, user.Role),
-            new("DisplayName", user.DisplayName)
+            new("DisplayName", user.FullName)
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

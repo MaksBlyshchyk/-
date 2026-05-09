@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/HRReserveSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    }
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow sticky-top">
             <div class="container-fluid">
@@ -22,30 +25,39 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
+                                <a class="nav-link text-dark @(currentController == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
                             </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Candidates" asp-action="Index">Кандидати</a>
+                                    <a class="nav-link text-dark @(currentController == "Candidates" ? "active" : "")" asp-area="" asp-controller="Candidates" asp-action="Index">Кандидати</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Vacancies" asp-action="Index">Вакансії</a>
+                                    <a class="nav-link text-dark @(currentController == "Vacancies" ? "active" : "")" asp-area="" asp-controller="Vacancies" asp-action="Index">Вакансії</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Applications" asp-action="Index">Заявки</a>
+                                    <a class="nav-link text-dark @(currentController == "Applications" ? "active" : "")" asp-area="" asp-controller="Applications" asp-action="Index">Заявки</a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Interviews" asp-action="Index">Співбесіди</a>
+                                <a class="nav-link text-dark @(currentController == "Interviews" ? "active" : "")" asp-area="" asp-controller="Interviews" asp-action="Index">Співбесіди</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="InterviewFeedbacks" asp-action="Index">Відгуки</a>
-                            </li>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("Interviewer"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="SoftSkillAssessments" asp-action="Index">Soft Skills</a>
+                                    <a class="nav-link text-dark @(currentController == "InterviewFeedbacks" ? "active" : "")" asp-area="" asp-controller="InterviewFeedbacks" asp-action="Index">Відгуки</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Interviewer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark @(currentController == "SoftSkillAssessments" ? "active" : "")" asp-area="" asp-controller="SoftSkillAssessments" asp-action="Index">Soft Skills</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark @(currentController == "Recruiters" ? "active" : "")" asp-area="" asp-controller="Recruiters" asp-action="Index">Рекрутери</a>
                                 </li>
                             }
                         }

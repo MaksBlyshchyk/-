@@ -7,7 +7,9 @@ public static class SeedData
 {
     public static async Task InitializeAsync(ApplicationDbContext context)
     {
-        var databaseHasData =
+        var recruiters = await EnsureRecruitersAsync(context);
+
+        var databaseHasHrData =
             await context.Candidates.AnyAsync() ||
             await context.Vacancies.AnyAsync() ||
             await context.Applications.AnyAsync() ||
@@ -15,8 +17,9 @@ public static class SeedData
             await context.InterviewFeedbacks.AnyAsync() ||
             await context.SoftSkillAssessments.AnyAsync();
 
-        if (databaseHasData)
+        if (databaseHasHrData)
         {
+            await AttachRecruitersToExistingRecordsAsync(context, recruiters);
             return;
         }
 
@@ -28,6 +31,7 @@ public static class SeedData
                 Email = "olena.koval@example.com",
                 Phone = "+380671112233",
                 Skills = "ASP.NET Core, SQL, HR analytics",
+                ResumeSummary = "4 роки досвіду у .NET-розробці, внутрішніх HR-сервісах та роботі з SQL-звітами.",
                 ExperienceYears = 4,
                 CreatedAt = DateTime.UtcNow.AddDays(-10)
             },
@@ -37,6 +41,7 @@ public static class SeedData
                 Email = "andrii.melnyk@example.com",
                 Phone = "+380501234567",
                 Skills = "JavaScript, React, UI testing",
+                ResumeSummary = "Frontend developer з досвідом побудови SPA, тестування UI та інтеграції з REST API.",
                 ExperienceYears = 3,
                 CreatedAt = DateTime.UtcNow.AddDays(-7)
             },
@@ -46,6 +51,7 @@ public static class SeedData
                 Email = "maria.shevchenko@example.com",
                 Phone = "+380931112244",
                 Skills = "Project management, communication, English B2",
+                ResumeSummary = "Координаторка проєктів з сильними soft skills, досвідом комунікації з командами та клієнтами.",
                 ExperienceYears = 6,
                 CreatedAt = DateTime.UtcNow.AddDays(-3)
             }
@@ -110,11 +116,16 @@ public static class SeedData
             }
         };
 
+        var admin = recruiters.Single(recruiter => recruiter.Login == "admin");
+        var recruiter = recruiters.Single(item => item.Login == "recruiter");
+        var interviewer = recruiters.Single(item => item.Login == "interviewer");
+
         var interviews = new List<Interview>
         {
             new()
             {
                 Application = applications[0],
+                Recruiter = recruiter,
                 InterviewDate = DateTime.Now.AddDays(-6),
                 InterviewType = "Technical",
                 Result = "Passed",
@@ -123,6 +134,7 @@ public static class SeedData
             new()
             {
                 Application = applications[2],
+                Recruiter = admin,
                 InterviewDate = DateTime.Now.AddDays(2),
                 InterviewType = "HR screening",
                 Result = "Planned",
@@ -135,6 +147,7 @@ public static class SeedData
             new()
             {
                 Interview = interviews[0],
+                Recruiter = interviewer,
                 Comment = "Сильна технічна база, структурні відповіді, хороша командна взаємодія.",
                 Score = 9,
                 Recommendation = "Hire",
@@ -143,6 +156,7 @@ public static class SeedData
             new()
             {
                 Interview = interviews[1],
+                Recruiter = recruiter,
                 Comment = "Потрібно провести HR screening і уточнити релевантність досвіду.",
                 Score = 7,
                 Recommendation = "Need more interviews",
@@ -180,6 +194,78 @@ public static class SeedData
         context.Interviews.AddRange(interviews);
         context.InterviewFeedbacks.AddRange(feedbacks);
         context.SoftSkillAssessments.AddRange(assessments);
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task<IReadOnlyList<Recruiter>> EnsureRecruitersAsync(ApplicationDbContext context)
+    {
+        var seedRecruiters = new[]
+        {
+            new Recruiter
+            {
+                FullName = "Адміністратор системи",
+                Email = "admin@hrreserve.local",
+                Login = "admin",
+                Password = "admin123",
+                Role = "Admin",
+                CreatedAt = DateTime.UtcNow.AddDays(-30)
+            },
+            new Recruiter
+            {
+                FullName = "Оксана Рекрутер",
+                Email = "recruiter@hrreserve.local",
+                Login = "recruiter",
+                Password = "recruiter123",
+                Role = "Recruiter",
+                CreatedAt = DateTime.UtcNow.AddDays(-25)
+            },
+            new Recruiter
+            {
+                FullName = "Ігор Інтерв'юер",
+                Email = "interviewer@hrreserve.local",
+                Login = "interviewer",
+                Password = "interviewer123",
+                Role = "Interviewer",
+                CreatedAt = DateTime.UtcNow.AddDays(-20)
+            }
+        };
+
+        foreach (var recruiter in seedRecruiters)
+        {
+            if (!await context.Recruiters.AnyAsync(item => item.Login == recruiter.Login))
+            {
+                context.Recruiters.Add(recruiter);
+            }
+        }
+
+        await context.SaveChangesAsync();
+
+        return await context.Recruiters
+            .OrderBy(recruiter => recruiter.Id)
+            .ToListAsync();
+    }
+
+    private static async Task AttachRecruitersToExistingRecordsAsync(ApplicationDbContext context, IReadOnlyList<Recruiter> recruiters)
+    {
+        var admin = recruiters.FirstOrDefault(item => item.Role == "Admin") ?? recruiters.First();
+        var interviewer = recruiters.FirstOrDefault(item => item.Role == "Interviewer") ?? admin;
+
+        var interviewsWithoutRecruiter = await context.Interviews
+            .Where(interview => interview.RecruiterId == null)
+            .ToListAsync();
+        foreach (var interview in interviewsWithoutRecruiter)
+        {
+            interview.RecruiterId = admin.Id;
+        }
+
+        var feedbacksWithoutRecruiter = await context.InterviewFeedbacks
+            .Where(feedback => feedback.RecruiterId == null)
+            .ToListAsync();
+        foreach (var feedback in feedbacksWithoutRecruiter)
+        {
+            feedback.RecruiterId = interviewer.Id;
+        }
 
         await context.SaveChangesAsync();
     }

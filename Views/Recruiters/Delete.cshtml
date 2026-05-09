@@ -1,0 +1,21 @@
+@model Recruiter
+
+@{
+    ViewData["Title"] = "Видалити рекрутера";
+}
+
+<h1 class="h2 mb-3">Видалити рекрутера</h1>
+<div class="alert alert-warning">Підтвердіть видалення рекрутера <strong>@Model.FullName</strong>.</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Роль</dt>
+    <dd class="col-sm-9">@Model.Role</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+</form>

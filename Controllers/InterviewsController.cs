@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -10,14 +11,30 @@ namespace HRReserveSystem.Controllers;
 [Authorize(Roles = "Admin,Recruiter,Interviewer")]
 public class InterviewsController(ApplicationDbContext context) : Controller
 {
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? interviewType, string? result)
     {
-        var interviews = context.Interviews
+        IQueryable<Interview> interviews = context.Interviews
             .AsNoTracking()
             .Include(interview => interview.Application)
                 .ThenInclude(application => application!.Candidate)
             .Include(interview => interview.Application)
-                .ThenInclude(application => application!.Vacancy);
+                .ThenInclude(application => application!.Vacancy)
+            .Include(interview => interview.Recruiter);
+
+        if (!string.IsNullOrWhiteSpace(interviewType))
+        {
+            interviews = interviews.Where(interview => interview.InterviewType == interviewType);
+        }
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            interviews = interviews.Where(interview => interview.Result == result);
+        }
+
+        ViewData["InterviewTypeFilter"] = interviewType;
+        ViewData["ResultFilter"] = result;
+        ViewData["InterviewTypes"] = new SelectList(new[] { "HR screening", "Technical", "Final", "Online" }, interviewType);
+        ViewData["Results"] = new SelectList(new[] { "Planned", "Passed", "Failed", "Rescheduled" }, result);
 
         return View(await interviews
             .OrderByDescending(interview => interview.InterviewDate)
@@ -37,7 +54,9 @@ public class InterviewsController(ApplicationDbContext context) : Controller
                 .ThenInclude(application => application!.Candidate)
             .Include(item => item.Application)
                 .ThenInclude(application => application!.Vacancy)
+            .Include(item => item.Recruiter)
             .Include(item => item.Feedbacks)
+                .ThenInclude(feedback => feedback.Recruiter)
             .FirstOrDefaultAsync(item => item.Id == id);
 
         return interview is null ? NotFound() : View(interview);
@@ -47,17 +66,19 @@ public class InterviewsController(ApplicationDbContext context) : Controller
     public async Task<IActionResult> Create()
     {
         await PopulateApplicationsSelectList();
-        return View(new Interview { InterviewDate = DateTime.Now });
+        await PopulateRecruitersSelectList(await GetCurrentRecruiterId());
+        return View(new Interview { InterviewDate = DateTime.Now, RecruiterId = await GetCurrentRecruiterId() });
     }
 
     [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("ApplicationId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
+    public async Task<IActionResult> Create([Bind("ApplicationId,RecruiterId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
     {
         if (!ModelState.IsValid)
         {
             await PopulateApplicationsSelectList(interview.ApplicationId);
+            await PopulateRecruitersSelectList(interview.RecruiterId);
             return View(interview);
         }
 
@@ -82,13 +103,14 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         }
 
         await PopulateApplicationsSelectList(interview.ApplicationId);
+        await PopulateRecruitersSelectList(interview.RecruiterId);
         return View(interview);
     }
 
     [Authorize(Roles = "Admin,Recruiter")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,ApplicationId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,ApplicationId,RecruiterId,InterviewDate,InterviewType,Result,Notes")] Interview interview)
     {
         if (id != interview.Id)
         {
@@ -98,6 +120,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         if (!ModelState.IsValid)
         {
             await PopulateApplicationsSelectList(interview.ApplicationId);
+            await PopulateRecruitersSelectList(interview.RecruiterId);
             return View(interview);
         }
 
@@ -133,6 +156,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
                 .ThenInclude(application => application!.Candidate)
             .Include(item => item.Application)
                 .ThenInclude(application => application!.Vacancy)
+            .Include(item => item.Recruiter)
             .FirstOrDefaultAsync(item => item.Id == id);
 
         return interview is null ? NotFound() : View(interview);
@@ -170,6 +194,24 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         });
 
         ViewData["ApplicationId"] = new SelectList(items, "Id", "Label", selectedApplicationId);
+    }
+
+    private async Task PopulateRecruitersSelectList(int? selectedRecruiterId = null)
+    {
+        var recruiters = await context.Recruiters
+            .AsNoTracking()
+            .OrderBy(recruiter => recruiter.FullName)
+            .ToListAsync();
+
+        ViewData["RecruiterId"] = new SelectList(recruiters, "Id", "FullName", selectedRecruiterId);
+    }
+
+    private async Task<int?> GetCurrentRecruiterId()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.TryParse(idValue, out var id) && await context.Recruiters.AnyAsync(recruiter => recruiter.Id == id)
+            ? id
+            : null;
     }
 
     private async Task<bool> InterviewExists(int id)

@@ -17,12 +17,22 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<SoftSkillAssessment> SoftSkillAssessments => Set<SoftSkillAssessment>();
 
+    public DbSet<Recruiter> Recruiters => Set<Recruiter>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Candidate>()
             .HasIndex(candidate => candidate.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Recruiter>()
+            .HasIndex(recruiter => recruiter.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Recruiter>()
+            .HasIndex(recruiter => recruiter.Login)
             .IsUnique();
 
         modelBuilder.Entity<Vacancy>()
@@ -32,5 +42,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Vacancy>()
             .Property(vacancy => vacancy.SalaryMax)
             .HasColumnType("TEXT");
+
+        modelBuilder.Entity<Interview>()
+            .HasOne(interview => interview.Recruiter)
+            .WithMany(recruiter => recruiter.Interviews)
+            .HasForeignKey(interview => interview.RecruiterId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<InterviewFeedback>()
+            .HasOne(feedback => feedback.Recruiter)
+            .WithMany(recruiter => recruiter.Feedbacks)
+            .HasForeignKey(feedback => feedback.RecruiterId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

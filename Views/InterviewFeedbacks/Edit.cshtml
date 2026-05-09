@@ -16,11 +16,18 @@
         <span asp-validation-for="InterviewId" class="text-danger"></span>
     </div>
     <div class="col-md-4">
+        <label asp-for="RecruiterId" class="form-label"></label>
+        <select asp-for="RecruiterId" class="form-select" asp-items="ViewBag.RecruiterId">
+            <option value="">Не вказано</option>
+        </select>
+        <span asp-validation-for="RecruiterId" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
         <label asp-for="Score" class="form-label"></label>
         <input asp-for="Score" class="form-control" min="1" max="10" />
         <span asp-validation-for="Score" class="text-danger"></span>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <label asp-for="Recommendation" class="form-label"></label>
         <select asp-for="Recommendation" class="form-select">
             <option value="Hire">Hire</option>

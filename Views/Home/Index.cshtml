@@ -54,6 +54,14 @@
         </div>
     </div>
     <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Рекрутери</div>
+                <div class="display-6 fw-semibold">@Model.RecruiterCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
         <div class="card dashboard-card h-100 border-success-subtle">
             <div class="card-body">
                 <div class="text-success small text-uppercase">Прийняті</div>
@@ -192,6 +200,7 @@
                         </div>
                         <div class="text-muted small">@interview.Application?.Vacancy?.Title</div>
                         <div class="small">@interview.InterviewDate.ToString("g") - @interview.InterviewType</div>
+                        <div class="text-muted small">Рекрутер: @(interview.Recruiter?.FullName ?? "Не призначено")</div>
                     </a>
                 }
                 </div>

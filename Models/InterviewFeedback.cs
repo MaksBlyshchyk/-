@@ -9,6 +9,9 @@ public class InterviewFeedback
     [Display(Name = "Співбесіда")]
     public int InterviewId { get; set; }
 
+    [Display(Name = "Рекрутер")]
+    public int? RecruiterId { get; set; }
+
     [Required]
     [StringLength(2000)]
     [Display(Name = "Коментар")]
@@ -27,4 +30,6 @@ public class InterviewFeedback
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Interview? Interview { get; set; }
+
+    public Recruiter? Recruiter { get; set; }
 }

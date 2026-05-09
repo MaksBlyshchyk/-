@@ -33,6 +33,11 @@
         <textarea asp-for="Skills" class="form-control" rows="4"></textarea>
         <span asp-validation-for="Skills" class="text-danger"></span>
     </div>
+    <div class="col-12">
+        <label asp-for="ResumeSummary" class="form-label"></label>
+        <textarea asp-for="ResumeSummary" class="form-control" rows="5" placeholder="Короткий текст резюме, досвід, освіта, ключові досягнення"></textarea>
+        <span asp-validation-for="ResumeSummary" class="text-danger"></span>
+    </div>
     <div class="col-12 d-flex gap-2">
         <button type="submit" class="btn btn-primary">Зберегти</button>
         <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>

@@ -12,6 +12,8 @@ public class DashboardViewModel
 
     public int InterviewCount { get; set; }
 
+    public int RecruiterCount { get; set; }
+
     public int AcceptedCandidateCount { get; set; }
 
     public int RejectedCandidateCount { get; set; }

@@ -46,6 +46,12 @@ main {
   background-color: #f1f5f9;
 }
 
+.nav-link.active {
+  background-color: #e8f1ff;
+  color: #0b5ed7 !important;
+  font-weight: 700;
+}
+
 .dashboard-hero {
   background: #fff;
   border: 1px solid #e3e7ed;
@@ -74,12 +80,32 @@ main {
 
 .table {
   background-color: #fff;
+  color: #1d2939;
 }
 
 .table th {
   color: #475467;
   font-size: 0.875rem;
   font-weight: 700;
+}
+
+.table td {
+  color: #1d2939;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-bg-type: #f8fafc;
+  color: #1d2939;
+}
+
+.table-hover > tbody > tr:hover > * {
+  --bs-table-bg-state: #eef4ff;
+  color: #101828;
+}
+
+.table-light {
+  --bs-table-bg: #eef2f6;
+  --bs-table-color: #344054;
 }
 
 .empty-state {

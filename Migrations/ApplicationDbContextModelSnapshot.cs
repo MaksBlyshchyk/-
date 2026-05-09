@@ -69,6 +69,10 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .HasMaxLength(40)
                 .HasColumnType("TEXT");
 
+            b.Property<string>("ResumeSummary")
+                .HasMaxLength(4000)
+                .HasColumnType("TEXT");
+
             b.Property<string>("Skills")
                 .IsRequired()
                 .HasMaxLength(1000)
@@ -103,6 +107,9 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .HasMaxLength(2000)
                 .HasColumnType("TEXT");
 
+            b.Property<int?>("RecruiterId")
+                .HasColumnType("INTEGER");
+
             b.Property<string>("Result")
                 .IsRequired()
                 .HasMaxLength(80)
@@ -111,6 +118,8 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.HasKey("Id");
 
             b.HasIndex("ApplicationId");
+
+            b.HasIndex("RecruiterId");
 
             b.ToTable("Interviews");
         });
@@ -137,6 +146,9 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .HasMaxLength(120)
                 .HasColumnType("TEXT");
 
+            b.Property<int?>("RecruiterId")
+                .HasColumnType("INTEGER");
+
             b.Property<int>("Score")
                 .HasColumnType("INTEGER");
 
@@ -144,7 +156,54 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
 
             b.HasIndex("InterviewId");
 
+            b.HasIndex("RecruiterId");
+
             b.ToTable("InterviewFeedbacks");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Recruiter", b =>
+        {
+            b.Property<int>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("INTEGER");
+
+            b.Property<DateTime>("CreatedAt")
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Email")
+                .IsRequired()
+                .HasMaxLength(160)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("FullName")
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Login")
+                .IsRequired()
+                .HasMaxLength(60)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Password")
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnType("TEXT");
+
+            b.Property<string>("Role")
+                .IsRequired()
+                .HasMaxLength(40)
+                .HasColumnType("TEXT");
+
+            b.HasKey("Id");
+
+            b.HasIndex("Email")
+                .IsUnique();
+
+            b.HasIndex("Login")
+                .IsUnique();
+
+            b.ToTable("Recruiters");
         });
 
         modelBuilder.Entity("HRReserveSystem.Models.SoftSkillAssessment", b =>
@@ -249,7 +308,14 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
+            b.HasOne("HRReserveSystem.Models.Recruiter", "Recruiter")
+                .WithMany("Interviews")
+                .HasForeignKey("RecruiterId")
+                .OnDelete(DeleteBehavior.SetNull);
+
             b.Navigation("Application");
+
+            b.Navigation("Recruiter");
         });
 
         modelBuilder.Entity("HRReserveSystem.Models.InterviewFeedback", b =>
@@ -260,7 +326,14 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
+            b.HasOne("HRReserveSystem.Models.Recruiter", "Recruiter")
+                .WithMany("Feedbacks")
+                .HasForeignKey("RecruiterId")
+                .OnDelete(DeleteBehavior.SetNull);
+
             b.Navigation("Interview");
+
+            b.Navigation("Recruiter");
         });
 
         modelBuilder.Entity("HRReserveSystem.Models.SoftSkillAssessment", b =>
@@ -289,6 +362,13 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("HRReserveSystem.Models.Interview", b =>
         {
             b.Navigation("Feedbacks");
+        });
+
+        modelBuilder.Entity("HRReserveSystem.Models.Recruiter", b =>
+        {
+            b.Navigation("Feedbacks");
+
+            b.Navigation("Interviews");
         });
 
         modelBuilder.Entity("HRReserveSystem.Models.Vacancy", b =>

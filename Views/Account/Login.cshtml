@@ -1,9 +1,9 @@
 @model HRReserveSystem.ViewModels.LoginViewModel
-@using HRReserveSystem.Services
+@using HRReserveSystem.Models
 
 @{
     ViewData["Title"] = "Login";
-    var demoUsers = ViewData["DemoUsers"] as IReadOnlyList<DemoUser> ?? [];
+    var demoUsers = ViewData["DemoUsers"] as IReadOnlyList<Recruiter> ?? [];
 }
 
 <div class="row justify-content-center">

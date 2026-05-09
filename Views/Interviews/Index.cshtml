@@ -7,13 +7,34 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
     <div>
         <h1 class="h2 mb-1">Співбесіди</h1>
-        <p class="text-muted mb-0">Історія та план найближчих HR, технічних і фінальних співбесід.</p>
+        <p class="text-muted mb-0">Історія та план HR, технічних і фінальних співбесід із відповідальним рекрутером.</p>
     </div>
     @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
     {
         <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Запланувати співбесіду</a>
     }
 </div>
+
+<form asp-action="Index" method="get" class="card mb-3">
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-sm-6 col-lg-3">
+            <label class="form-label" for="interviewType">Тип</label>
+            <select id="interviewType" class="form-select" name="interviewType" asp-items="ViewBag.InterviewTypes">
+                <option value="">Усі типи</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <label class="form-label" for="result">Результат</label>
+            <select id="result" class="form-select" name="result" asp-items="ViewBag.Results">
+                <option value="">Усі результати</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-3 d-flex gap-2">
+            <button class="btn btn-outline-primary flex-fill" type="submit">Фільтрувати</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Скинути</a>
+        </div>
+    </div>
+</form>
 
 <div class="card">
     @if (Model.Any())
@@ -24,6 +45,7 @@
                     <tr>
                         <th>Кандидат</th>
                         <th>Вакансія</th>
+                        <th>Рекрутер</th>
                         <th>Дата</th>
                         <th>Тип</th>
                         <th>Результат</th>
@@ -45,6 +67,7 @@
                     <tr>
                         <td>@item.Application?.Candidate?.FullName</td>
                         <td>@item.Application?.Vacancy?.Title</td>
+                        <td>@(item.Recruiter?.FullName ?? "Не призначено")</td>
                         <td>@item.InterviewDate.ToString("g")</td>
                         <td>@item.InterviewType</td>
                         <td><span class="badge @badgeClass">@item.Result</span></td>

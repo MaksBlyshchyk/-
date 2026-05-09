@@ -27,6 +27,10 @@ public class Candidate
     [Display(Name = "Навички")]
     public string Skills { get; set; } = string.Empty;
 
+    [StringLength(4000)]
+    [Display(Name = "Резюме")]
+    public string? ResumeSummary { get; set; }
+
     [Range(0, 60)]
     [Display(Name = "Років досвіду")]
     public int ExperienceYears { get; set; }

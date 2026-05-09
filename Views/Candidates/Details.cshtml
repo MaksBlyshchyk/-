@@ -12,36 +12,55 @@
     </div>
 </div>
 
-<dl class="row">
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9">@Model.Email</dd>
-    <dt class="col-sm-3">Телефон</dt>
-    <dd class="col-sm-9">@Model.Phone</dd>
-    <dt class="col-sm-3">Навички</dt>
-    <dd class="col-sm-9">@Model.Skills</dd>
-    <dt class="col-sm-3">Досвід</dt>
-    <dd class="col-sm-9">@Model.ExperienceYears р.</dd>
-    <dt class="col-sm-3">Створено</dt>
-    <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
-</dl>
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+            <dt class="col-sm-3">Телефон</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+            <dt class="col-sm-3">Навички</dt>
+            <dd class="col-sm-9">@Model.Skills</dd>
+            <dt class="col-sm-3">Резюме</dt>
+            <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.ResumeSummary) ? "Не додано" : Model.ResumeSummary)</dd>
+            <dt class="col-sm-3">Досвід</dt>
+            <dd class="col-sm-9">@Model.ExperienceYears р.</dd>
+            <dt class="col-sm-3">Створено</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
+        </dl>
+    </div>
+</div>
 
-<h2 class="h5 mt-4">Заявки кандидата</h2>
-<table class="table table-sm align-middle">
-    <thead>
-        <tr>
-            <th>Вакансія</th>
-            <th>Статус</th>
-            <th>Дата</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var application in Model.Applications)
+<div class="card">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Заявки кандидата</h2>
+    </div>
+    @if (Model.Applications.Any())
     {
-        <tr>
-            <td>@application.Vacancy?.Title</td>
-            <td>@application.Status</td>
-            <td>@application.AppliedAt.ToLocalTime().ToString("g")</td>
-        </tr>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Вакансія</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var application in Model.Applications)
+                {
+                    <tr>
+                        <td>@application.Vacancy?.Title</td>
+                        <td><span class="badge text-bg-secondary">@application.Status</span></td>
+                        <td>@application.AppliedAt.ToLocalTime().ToString("g")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
-    </tbody>
-</table>
+    else
+    {
+        <div class="empty-state">У кандидата ще немає заявок.</div>
+    }
+</div>

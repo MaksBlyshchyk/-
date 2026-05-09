@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
-[Authorize(Roles = "Admin,Recruiter")]
+[Authorize(Roles = "Admin,Interviewer")]
 public class SoftSkillAssessmentsController(ApplicationDbContext context) : Controller
 {
     public async Task<IActionResult> Index()

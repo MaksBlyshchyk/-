@@ -9,6 +9,9 @@ public class Interview
     [Display(Name = "Заявка")]
     public int ApplicationId { get; set; }
 
+    [Display(Name = "Рекрутер")]
+    public int? RecruiterId { get; set; }
+
     [Display(Name = "Дата співбесіди")]
     public DateTime InterviewDate { get; set; } = DateTime.Now;
 
@@ -27,6 +30,8 @@ public class Interview
     public string? Notes { get; set; }
 
     public Application? Application { get; set; }
+
+    public Recruiter? Recruiter { get; set; }
 
     public ICollection<InterviewFeedback> Feedbacks { get; set; } = new List<InterviewFeedback>();
 }

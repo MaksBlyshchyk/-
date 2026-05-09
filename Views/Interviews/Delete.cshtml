@@ -8,6 +8,8 @@
 <div class="alert alert-warning">Підтвердіть видалення співбесіди для <strong>@Model.Application?.Candidate?.FullName</strong>.</div>
 
 <dl class="row">
+    <dt class="col-sm-3">Рекрутер</dt>
+    <dd class="col-sm-9">@(Model.Recruiter?.FullName ?? "Не призначено")</dd>
     <dt class="col-sm-3">Дата</dt>
     <dd class="col-sm-9">@Model.InterviewDate.ToString("g")</dd>
     <dt class="col-sm-3">Тип</dt>

@@ -28,6 +28,7 @@ public class HomeController : Controller
             VacancyCount = await _context.Vacancies.CountAsync(),
             ApplicationCount = await _context.Applications.CountAsync(),
             InterviewCount = await _context.Interviews.CountAsync(),
+            RecruiterCount = await _context.Recruiters.CountAsync(),
             AcceptedCandidateCount = await _context.Applications
                 .Where(application =>
                     application.Status == "Accepted" ||
@@ -57,6 +58,7 @@ public class HomeController : Controller
                     .ThenInclude(application => application!.Candidate)
                 .Include(interview => interview.Application)
                     .ThenInclude(application => application!.Vacancy)
+                .Include(interview => interview.Recruiter)
                 .Where(interview => interview.InterviewDate >= DateTime.Now)
                 .OrderBy(interview => interview.InterviewDate)
                 .Take(5)

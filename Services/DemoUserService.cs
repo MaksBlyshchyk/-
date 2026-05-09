@@ -1,25 +1,25 @@
+using HRReserveSystem.Data;
+using HRReserveSystem.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace HRReserveSystem.Services;
 
-public class DemoUserService
+public class DemoUserService(ApplicationDbContext context)
 {
-    private static readonly IReadOnlyList<DemoUser> Users =
-    [
-        new("admin", "admin123", "Admin", "Адміністратор"),
-        new("recruiter", "recruiter123", "Recruiter", "Рекрутер"),
-        new("interviewer", "interviewer123", "Interviewer", "Інтерв'юер")
-    ];
-
-    public DemoUser? ValidateUser(string login, string password)
+    public async Task<Recruiter?> ValidateUserAsync(string login, string password)
     {
-        return Users.FirstOrDefault(user =>
-            string.Equals(user.Login, login, StringComparison.OrdinalIgnoreCase) &&
-            user.Password == password);
+        return await context.Recruiters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(recruiter =>
+                recruiter.Login.ToLower() == login.ToLower() &&
+                recruiter.Password == password);
     }
 
-    public IReadOnlyList<DemoUser> GetDemoUsers()
+    public async Task<IReadOnlyList<Recruiter>> GetDemoUsersAsync()
     {
-        return Users;
+        return await context.Recruiters
+            .AsNoTracking()
+            .OrderBy(recruiter => recruiter.Id)
+            .ToListAsync();
     }
 }
-
-public record DemoUser(string Login, string Password, string Role, string DisplayName);

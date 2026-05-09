@@ -23,6 +23,8 @@
             <dd class="col-sm-9">@Model.Application?.Candidate?.FullName</dd>
             <dt class="col-sm-3">Вакансія</dt>
             <dd class="col-sm-9">@Model.Application?.Vacancy?.Title</dd>
+            <dt class="col-sm-3">Рекрутер</dt>
+            <dd class="col-sm-9">@(Model.Recruiter?.FullName ?? "Не призначено")</dd>
             <dt class="col-sm-3">Дата</dt>
             <dd class="col-sm-9">@Model.InterviewDate.ToString("g")</dd>
             <dt class="col-sm-3">Тип</dt>
@@ -45,6 +47,7 @@
             <table class="table table-sm align-middle mb-0">
                 <thead class="table-light">
                     <tr>
+                        <th>Автор</th>
                         <th>Оцінка</th>
                         <th>Рекомендація</th>
                         <th>Коментар</th>
@@ -54,6 +57,7 @@
                 @foreach (var feedback in Model.Feedbacks)
                 {
                     <tr>
+                        <td>@(feedback.Recruiter?.FullName ?? "Не вказано")</td>
                         <td><span class="badge text-bg-info">@feedback.Score/10</span></td>
                         <td>@feedback.Recommendation</td>
                         <td>@feedback.Comment</td>

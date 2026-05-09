@@ -17,6 +17,8 @@ erDiagram
     APPLICATIONS ||--o{ INTERVIEWS : "проходить"
     INTERVIEWS ||--o{ INTERVIEW_FEEDBACKS : "отримує"
     CANDIDATES ||--o{ SOFT_SKILL_ASSESSMENTS : "оцінюється"
+    RECRUITERS ||--o{ INTERVIEWS : "проводить"
+    RECRUITERS ||--o{ INTERVIEW_FEEDBACKS : "залишає"
 
     CANDIDATES {
         int Id PK
@@ -24,6 +26,7 @@ erDiagram
         string Email
         string Phone
         string Skills
+        string ResumeSummary
         int ExperienceYears
         datetime CreatedAt
     }
@@ -50,6 +53,7 @@ erDiagram
     INTERVIEWS {
         int Id PK
         int ApplicationId FK
+        int RecruiterId FK
         datetime InterviewDate
         string InterviewType
         string Result
@@ -59,6 +63,7 @@ erDiagram
     INTERVIEW_FEEDBACKS {
         int Id PK
         int InterviewId FK
+        int RecruiterId FK
         string Comment
         int Score
         string Recommendation
@@ -74,6 +79,16 @@ erDiagram
         int StressResistance
         int Leadership
         string OverallComment
+    }
+
+    RECRUITERS {
+        int Id PK
+        string FullName
+        string Email
+        string Login
+        string Password
+        string Role
+        datetime CreatedAt
     }
 ```
 
@@ -139,6 +154,7 @@ flowchart LR
 | `Interviews` | Зберігає історію та план співбесід за заявками. |
 | `InterviewFeedbacks` | Зберігає оцінки, коментарі та рекомендації після співбесід. |
 | `SoftSkillAssessments` | Зберігає оцінку soft skills кандидата за ключовими критеріями. |
+| `Recruiters` | Зберігає користувачів системи, їх логіни, ролі та зв'язки зі співбесідами й відгуками. |
 
 ## Ролі користувачів
 

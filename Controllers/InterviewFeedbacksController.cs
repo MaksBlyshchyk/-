@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -7,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Controllers;
 
-[Authorize(Roles = "Admin,Recruiter,Interviewer")]
+[Authorize(Roles = "Admin,Interviewer")]
 public class InterviewFeedbacksController(ApplicationDbContext context) : Controller
 {
     public async Task<IActionResult> Index()
     {
         var feedbacks = context.InterviewFeedbacks
             .AsNoTracking()
+            .Include(feedback => feedback.Recruiter)
             .Include(feedback => feedback.Interview)
                 .ThenInclude(interview => interview!.Application)
                     .ThenInclude(application => application!.Candidate)
@@ -35,6 +37,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
 
         var feedback = await context.InterviewFeedbacks
             .AsNoTracking()
+            .Include(item => item.Recruiter)
             .Include(item => item.Interview)
                 .ThenInclude(interview => interview!.Application)
                     .ThenInclude(application => application!.Candidate)
@@ -48,17 +51,30 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
 
     public async Task<IActionResult> Create(int? interviewId)
     {
+        var currentRecruiterId = await GetCurrentRecruiterId();
         await PopulateInterviewsSelectList(interviewId);
-        return View(new InterviewFeedback { InterviewId = interviewId ?? 0 });
+        await PopulateRecruitersSelectList(currentRecruiterId);
+
+        return View(new InterviewFeedback
+        {
+            InterviewId = interviewId ?? 0,
+            RecruiterId = currentRecruiterId
+        });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("InterviewId,Comment,Score,Recommendation")] InterviewFeedback feedback)
+    public async Task<IActionResult> Create([Bind("InterviewId,RecruiterId,Comment,Score,Recommendation")] InterviewFeedback feedback)
     {
+        if (User.IsInRole("Interviewer"))
+        {
+            feedback.RecruiterId = await GetCurrentRecruiterId();
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulateInterviewsSelectList(feedback.InterviewId);
+            await PopulateRecruitersSelectList(feedback.RecruiterId);
             return View(feedback);
         }
 
@@ -69,7 +85,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Admin,Recruiter")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id is null)
@@ -84,13 +100,14 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         }
 
         await PopulateInterviewsSelectList(feedback.InterviewId);
+        await PopulateRecruitersSelectList(feedback.RecruiterId);
         return View(feedback);
     }
 
-    [Authorize(Roles = "Admin,Recruiter")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,InterviewId,Comment,Score,Recommendation,CreatedAt")] InterviewFeedback feedback)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,InterviewId,RecruiterId,Comment,Score,Recommendation,CreatedAt")] InterviewFeedback feedback)
     {
         if (id != feedback.Id)
         {
@@ -100,6 +117,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         if (!ModelState.IsValid)
         {
             await PopulateInterviewsSelectList(feedback.InterviewId);
+            await PopulateRecruitersSelectList(feedback.RecruiterId);
             return View(feedback);
         }
 
@@ -121,7 +139,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Admin,Recruiter")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)
@@ -131,6 +149,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
 
         var feedback = await context.InterviewFeedbacks
             .AsNoTracking()
+            .Include(item => item.Recruiter)
             .Include(item => item.Interview)
                 .ThenInclude(interview => interview!.Application)
                     .ThenInclude(application => application!.Candidate)
@@ -142,7 +161,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return feedback is null ? NotFound() : View(feedback);
     }
 
-    [Authorize(Roles = "Admin,Recruiter")]
+    [Authorize(Roles = "Admin")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
@@ -176,6 +195,24 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         });
 
         ViewData["InterviewId"] = new SelectList(items, "Id", "Label", selectedInterviewId);
+    }
+
+    private async Task PopulateRecruitersSelectList(int? selectedRecruiterId = null)
+    {
+        var recruiters = await context.Recruiters
+            .AsNoTracking()
+            .OrderBy(recruiter => recruiter.FullName)
+            .ToListAsync();
+
+        ViewData["RecruiterId"] = new SelectList(recruiters, "Id", "FullName", selectedRecruiterId);
+    }
+
+    private async Task<int?> GetCurrentRecruiterId()
+    {
+        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.TryParse(idValue, out var id) && await context.Recruiters.AnyAsync(recruiter => recruiter.Id == id)
+            ? id
+            : null;
     }
 
     private async Task<bool> FeedbackExists(int id)
