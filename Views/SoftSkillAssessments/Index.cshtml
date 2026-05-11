@@ -34,12 +34,12 @@
                 {
                     <tr>
                         <td class="fw-semibold">@item.Candidate?.FullName</td>
-                        <td><span class="badge text-bg-info">@item.Communication</span></td>
-                        <td><span class="badge text-bg-info">@item.Teamwork</span></td>
-                        <td><span class="badge text-bg-info">@item.Responsibility</span></td>
-                        <td><span class="badge text-bg-info">@item.StressResistance</span></td>
-                        <td><span class="badge text-bg-info">@item.Leadership</span></td>
-                        <td><span class="badge text-bg-primary">@item.AverageScore</span></td>
+                        <td><span class="score-badge">@item.Communication</span></td>
+                        <td><span class="score-badge">@item.Teamwork</span></td>
+                        <td><span class="score-badge">@item.Responsibility</span></td>
+                        <td><span class="score-badge">@item.StressResistance</span></td>
+                        <td><span class="score-badge">@item.Leadership</span></td>
+                        <td><span class="score-badge score-badge-average">@item.AverageScore</span></td>
                         <td class="text-end text-nowrap">
                             <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Редагувати</a>
                             <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Деталі</a>

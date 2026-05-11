@@ -53,7 +53,7 @@
                 {
                     <tr>
                         <td>@application.Vacancy?.Title</td>
-                        <td><span class="badge text-bg-secondary">@application.Status</span></td>
+                        <td><span class="badge @HrOptions.ApplicationStatusBadge(application.Status)">@application.Status</span></td>
                         <td>@application.AppliedAt.ToLocalTime().ToString("g")</td>
                     </tr>
                 }

@@ -50,37 +50,37 @@ public static class HrOptions
 
     public static string ApplicationStatusBadge(string? status) => status switch
     {
-        "New" => "text-bg-primary",
-        "Screening" => "text-bg-info",
-        "Interview" => "text-bg-warning",
-        "TestTask" => "text-bg-secondary",
+        "New" => "text-bg-secondary",
+        "Screening" => "text-bg-primary",
+        "Interview" => "text-bg-warning text-dark",
+        "TestTask" => "text-bg-info text-dark",
         "Offer" => "text-bg-success",
         "Hired" => "text-bg-success",
         "Rejected" => "text-bg-danger",
-        _ => "text-bg-light"
+        _ => "text-bg-light text-dark"
     };
 
     public static string VacancyStatusBadge(string? status) => status switch
     {
         "Open" => "text-bg-success",
-        "Paused" => "text-bg-warning",
+        "Paused" => "text-bg-warning text-dark",
         "Closed" => "text-bg-secondary",
-        _ => "text-bg-light"
+        _ => "text-bg-light text-dark"
     };
 
     public static string InterviewResultBadge(string? result) => result switch
     {
-        "Pending" => "text-bg-warning",
+        "Pending" => "text-bg-warning text-dark",
         "Passed" => "text-bg-success",
         "Failed" => "text-bg-danger",
-        _ => "text-bg-light"
+        _ => "text-bg-light text-dark"
     };
 
     public static string FeedbackRecommendationBadge(string? recommendation) => recommendation switch
     {
         "Hire" => "text-bg-success",
-        "Maybe" => "text-bg-warning",
+        "Maybe" => "text-bg-warning text-dark",
         "Reject" => "text-bg-danger",
-        _ => "text-bg-light"
+        _ => "text-bg-light text-dark"
     };
 }

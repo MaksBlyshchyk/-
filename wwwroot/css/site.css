@@ -7,6 +7,9 @@
   --app-heading: #101828;
   --app-primary-soft: #e8f1ff;
   --app-primary: #0b5ed7;
+  --app-table-head: #e9eef5;
+  --app-table-hover: #eef4ff;
+  --app-table-stripe: #f8fafc;
   --app-shadow: 0 0.35rem 1rem rgba(16, 24, 40, 0.06);
 }
 
@@ -133,16 +136,43 @@ h6 {
   padding: 0.4em 0.6em;
 }
 
+.badge.text-bg-info {
+  background-color: #cff4fc !important;
+  color: #0f172a !important;
+}
+
+.badge.text-bg-warning {
+  background-color: #ffe69c !important;
+  color: #1f2937 !important;
+}
+
+.badge.text-bg-light {
+  background-color: #f8fafc !important;
+  color: #1f2937 !important;
+}
+
 .table {
+  --bs-table-bg: var(--app-surface);
+  --bs-table-color: var(--app-text);
+  --bs-table-striped-bg: var(--app-table-stripe);
+  --bs-table-striped-color: var(--app-text);
+  --bs-table-hover-bg: var(--app-table-hover);
+  --bs-table-hover-color: var(--app-heading);
   background-color: var(--app-surface);
-  color: var(--app-text);
+  color: var(--app-text) !important;
   margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.table > :not(caption) > * > * {
+  background-color: var(--bs-table-bg);
+  color: var(--app-text) !important;
   vertical-align: middle;
 }
 
 .table th {
   border-bottom-color: #d0d5dd;
-  color: #475467;
+  color: #344054 !important;
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -152,24 +182,59 @@ h6 {
 }
 
 .table td {
-  color: var(--app-text);
+  color: var(--app-text) !important;
   padding-bottom: 0.8rem;
   padding-top: 0.8rem;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-  --bs-table-bg-type: #f8fafc;
-  color: var(--app-text);
+  --bs-table-bg-type: var(--app-table-stripe);
+  color: var(--app-text) !important;
 }
 
 .table-hover > tbody > tr:hover > * {
-  --bs-table-bg-state: #eef4ff;
-  color: #101828;
+  --bs-table-bg-state: var(--app-table-hover);
+  color: var(--app-heading) !important;
 }
 
 .table-light {
-  --bs-table-bg: #eef2f6;
+  --bs-table-bg: var(--app-table-head);
   --bs-table-color: #344054;
+}
+
+.table .btn {
+  white-space: nowrap;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+.table-responsive {
+  border-radius: 0.5rem;
+}
+
+.score-badge {
+  align-items: center;
+  background: #e7f1ff;
+  border: 1px solid #b6d4fe;
+  border-radius: 999px;
+  color: #0f172a !important;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  min-height: 2rem;
+  min-width: 2.25rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.score-badge-average {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff !important;
+  min-width: 3rem;
 }
 
 .empty-state {
@@ -183,6 +248,9 @@ main > form.row.g-3 {
   border: 1px solid var(--app-border);
   border-radius: 0.5rem;
   box-shadow: var(--app-shadow);
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 1120px;
   padding: 1.15rem;
 }
 
