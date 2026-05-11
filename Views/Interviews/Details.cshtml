@@ -58,7 +58,7 @@
                 {
                     <tr>
                         <td>@(feedback.Recruiter?.FullName ?? "Не вказано")</td>
-                        <td><span class="badge text-bg-info">@feedback.Score/10</span></td>
+                        <td><span class="badge text-bg-info text-dark">@feedback.Score/10</span></td>
                         <td><span class="badge @HrOptions.FeedbackRecommendationBadge(feedback.Recommendation)">@feedback.Recommendation</span></td>
                         <td>@feedback.Comment</td>
                     </tr>

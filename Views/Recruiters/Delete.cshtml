@@ -11,7 +11,7 @@
     <dt class="col-sm-3">Електронна пошта</dt>
     <dd class="col-sm-9">@Model.Email</dd>
     <dt class="col-sm-3">Роль</dt>
-    <dd class="col-sm-9">@Model.Role</dd>
+    <dd class="col-sm-9"><span class="badge @HrOptions.RecruiterRoleBadge(Model.Role)">@Model.Role</span></dd>
 </dl>
 
 <form asp-action="Delete">

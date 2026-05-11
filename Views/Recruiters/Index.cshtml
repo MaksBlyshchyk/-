@@ -30,13 +30,7 @@
                 <tbody>
                 @foreach (var item in Model)
                 {
-                    var badgeClass = item.Role switch
-                    {
-                        "Admin" => "text-bg-danger",
-                        "Recruiter" => "text-bg-primary",
-                        "Interviewer" => "text-bg-info",
-                        _ => "text-bg-secondary"
-                    };
+                    var badgeClass = HrOptions.RecruiterRoleBadge(item.Role);
 
                     <tr>
                         <td class="fw-semibold">@item.FullName</td>
@@ -58,8 +52,8 @@
     else
     {
         <div class="empty-state">
-            <h2 class="h5">Рекрутерів ще немає</h2>
-            <p class="text-muted mb-3">Додайте користувача для роботи з HR-системою.</p>
+            <h2 class="h5">Дані відсутні</h2>
+            <p class="text-muted mb-3">Натисніть кнопку «Додати», щоб створити перший запис.</p>
             <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати рекрутера</a>
         </div>
     }

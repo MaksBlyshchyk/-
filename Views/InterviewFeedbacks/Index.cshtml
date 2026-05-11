@@ -37,7 +37,7 @@
                         <td>@item.Interview?.Application?.Candidate?.FullName</td>
                         <td>@item.Interview?.Application?.Vacancy?.Title</td>
                         <td>@(item.Recruiter?.FullName ?? "Не вказано")</td>
-                        <td><span class="badge text-bg-info">@item.Score/10</span></td>
+                        <td><span class="badge text-bg-info text-dark">@item.Score/10</span></td>
                         <td><span class="badge @badgeClass">@item.Recommendation</span></td>
                         <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
                         <td class="text-end text-nowrap">
@@ -60,8 +60,8 @@
     else
     {
         <div class="empty-state">
-            <h2 class="h5">Відгуків ще немає</h2>
-            <p class="text-muted mb-3">Додайте відгук після проведеної співбесіди.</p>
+            <h2 class="h5">Дані відсутні</h2>
+            <p class="text-muted mb-3">Натисніть кнопку «Додати», щоб створити перший запис.</p>
             <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати відгук</a>
         </div>
     }

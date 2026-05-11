@@ -83,4 +83,12 @@ public static class HrOptions
         "Reject" => "text-bg-danger",
         _ => "text-bg-light text-dark"
     };
+
+    public static string RecruiterRoleBadge(string? role) => role switch
+    {
+        "Admin" => "text-bg-danger",
+        "Recruiter" => "text-bg-primary",
+        "Interviewer" => "text-bg-info text-dark",
+        _ => "text-bg-secondary"
+    };
 }

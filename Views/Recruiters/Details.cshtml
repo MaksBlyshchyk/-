@@ -20,7 +20,7 @@
             <dt class="col-sm-3">Логін</dt>
             <dd class="col-sm-9"><code>@Model.Login</code></dd>
             <dt class="col-sm-3">Роль</dt>
-            <dd class="col-sm-9"><span class="badge text-bg-primary">@Model.Role</span></dd>
+            <dd class="col-sm-9"><span class="badge @HrOptions.RecruiterRoleBadge(Model.Role)">@Model.Role</span></dd>
             <dt class="col-sm-3">Створено</dt>
             <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
         </dl>

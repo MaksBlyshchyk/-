@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" data-theme="light">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HR Reserve System</title>
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem("hrreserve-theme");
+                document.documentElement.setAttribute("data-theme", savedTheme === "dark" ? "dark" : "light");
+            } catch (error) {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HRReserveSystem.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body data-theme="light">
     @{
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light app-navbar border-bottom box-shadow sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand fw-semibold app-brand" asp-area="" asp-controller="Home" asp-action="Index">HR Reserve</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -66,13 +76,19 @@
                             <a class="nav-link text-dark @((currentController == "Home" && currentAction == "About") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="About">Про систему</a>
                         </li>
                     </ul>
-                    <ul class="navbar-nav align-items-lg-center">
+                    <ul class="navbar-nav align-items-lg-center gap-2">
+                        <li class="nav-item">
+                            <button class="btn btn-sm btn-theme-toggle" id="themeToggle" type="button" aria-label="Перемкнути тему" aria-pressed="false">
+                                <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+                                <span class="theme-toggle-text">Темна</span>
+                            </button>
+                        </li>
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item me-lg-2">
                                 <span class="navbar-text small app-user-chip">
                                     @User.FindFirst("DisplayName")?.Value
-                                    <span class="badge text-bg-primary ms-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                                    <span class="badge @HrOptions.RecruiterRoleBadge(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value) ms-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
                                 </span>
                             </li>
                             <li class="nav-item">
@@ -96,7 +112,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-white app-footer">
+    <footer class="border-top footer text-muted app-footer">
         <div class="container-fluid">
             &copy; 2026 - HR Reserve System - <a asp-area="" asp-controller="Home" asp-action="About">Про систему</a>
         </div>
