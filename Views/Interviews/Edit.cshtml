@@ -29,20 +29,20 @@
     <div class="col-md-6">
         <label asp-for="InterviewType" class="form-label"></label>
         <select asp-for="InterviewType" class="form-select">
-            <option value="HR screening">HR screening</option>
-            <option value="Technical">Technical</option>
-            <option value="Final">Final</option>
-            <option value="Online">Online</option>
+            @foreach (var type in HrOptions.InterviewTypes)
+            {
+                <option value="@type">@type</option>
+            }
         </select>
         <span asp-validation-for="InterviewType" class="text-danger"></span>
     </div>
     <div class="col-md-6">
         <label asp-for="Result" class="form-label"></label>
         <select asp-for="Result" class="form-select">
-            <option value="Planned">Planned</option>
-            <option value="Passed">Passed</option>
-            <option value="Failed">Failed</option>
-            <option value="Rescheduled">Rescheduled</option>
+            @foreach (var result in HrOptions.InterviewResults)
+            {
+                <option value="@result">@result</option>
+            }
         </select>
         <span asp-validation-for="Result" class="text-danger"></span>
     </div>
@@ -52,8 +52,8 @@
         <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
     <div class="col-12 d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Зберегти</button>
-        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+        <button type="submit" class="btn btn-success">Зберегти</button>
+        <a class="btn btn-secondary" asp-action="Index">Назад до списку</a>
     </div>
 </form>
 

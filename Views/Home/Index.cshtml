@@ -13,7 +13,7 @@
     @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
     {
         <div class="d-flex flex-wrap gap-2">
-            <a class="btn btn-primary" asp-controller="Candidates" asp-action="Create"><span aria-hidden="true">+</span> Кандидат</a>
+            <a class="btn btn-success" asp-controller="Candidates" asp-action="Create"><span aria-hidden="true">+</span> Кандидат</a>
             <a class="btn btn-outline-primary" asp-controller="Vacancies" asp-action="Create"><span aria-hidden="true">+</span> Вакансія</a>
             <a class="btn btn-outline-secondary" asp-controller="Applications" asp-action="Create"><span aria-hidden="true">+</span> Заявка</a>
         </div>
@@ -149,13 +149,7 @@
                         <tbody>
                         @foreach (var vacancy in Model.RecentVacancies)
                         {
-                            var badgeClass = vacancy.Status switch
-                            {
-                                "Open" => "text-bg-success",
-                                "Paused" => "text-bg-warning",
-                                "Closed" => "text-bg-secondary",
-                                _ => "text-bg-primary"
-                            };
+                            var badgeClass = HrOptions.VacancyStatusBadge(vacancy.Status);
 
                             <tr>
                                 <td>
@@ -196,7 +190,7 @@
                     <a class="list-group-item list-group-item-action" asp-controller="Interviews" asp-action="Details" asp-route-id="@interview.Id">
                         <div class="d-flex justify-content-between gap-2">
                             <strong>@interview.Application?.Candidate?.FullName</strong>
-                            <span class="badge text-bg-warning">@interview.Result</span>
+                            <span class="badge @HrOptions.InterviewResultBadge(interview.Result)">@interview.Result</span>
                         </div>
                         <div class="text-muted small">@interview.Application?.Vacancy?.Title</div>
                         <div class="small">@interview.InterviewDate.ToString("g") - @interview.InterviewType</div>

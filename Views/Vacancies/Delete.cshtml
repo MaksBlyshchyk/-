@@ -9,7 +9,7 @@
 
 <dl class="row">
     <dt class="col-sm-3">Статус</dt>
-    <dd class="col-sm-9">@Model.Status</dd>
+    <dd class="col-sm-9"><span class="badge @HrOptions.VacancyStatusBadge(Model.Status)">@Model.Status</span></dd>
     <dt class="col-sm-3">Зарплата</dt>
     <dd class="col-sm-9">@Model.SalaryMin - @Model.SalaryMax</dd>
 </dl>
@@ -17,5 +17,5 @@
 <form asp-action="Delete">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Видалити</button>
-    <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    <a class="btn btn-secondary" asp-action="Index">Назад до списку</a>
 </form>

@@ -19,7 +19,7 @@ public static class SeedData
 
         if (databaseHasHrData)
         {
-            await AttachRecruitersToExistingRecordsAsync(context, recruiters);
+            await NormalizeExistingRecordsAsync(context, recruiters);
             return;
         }
 
@@ -30,20 +30,22 @@ public static class SeedData
                 FullName = "Олена Коваль",
                 Email = "olena.koval@example.com",
                 Phone = "+380671112233",
-                Skills = "ASP.NET Core, SQL, HR analytics",
+                Skills = "ASP.NET Core, C#, SQL, HR analytics",
+                ResumeFilePath = "/resumes/olena-koval.pdf",
                 ResumeSummary = "4 роки досвіду у .NET-розробці, внутрішніх HR-сервісах та роботі з SQL-звітами.",
                 ExperienceYears = 4,
-                CreatedAt = DateTime.UtcNow.AddDays(-10)
+                CreatedAt = DateTime.UtcNow.AddDays(-14)
             },
             new()
             {
                 FullName = "Андрій Мельник",
                 Email = "andrii.melnyk@example.com",
                 Phone = "+380501234567",
-                Skills = "JavaScript, React, UI testing",
+                Skills = "JavaScript, React, UI testing, REST API",
+                ResumeFilePath = "/resumes/andrii-melnyk.pdf",
                 ResumeSummary = "Frontend developer з досвідом побудови SPA, тестування UI та інтеграції з REST API.",
                 ExperienceYears = 3,
-                CreatedAt = DateTime.UtcNow.AddDays(-7)
+                CreatedAt = DateTime.UtcNow.AddDays(-11)
             },
             new()
             {
@@ -51,9 +53,32 @@ public static class SeedData
                 Email = "maria.shevchenko@example.com",
                 Phone = "+380931112244",
                 Skills = "Project management, communication, English B2",
-                ResumeSummary = "Координаторка проєктів з сильними soft skills, досвідом комунікації з командами та клієнтами.",
+                ResumeFilePath = "/resumes/maria-shevchenko.pdf",
+                ResumeSummary = "Координаторка проєктів із сильними soft skills, досвідом комунікації з командами та клієнтами.",
                 ExperienceYears = 6,
-                CreatedAt = DateTime.UtcNow.AddDays(-3)
+                CreatedAt = DateTime.UtcNow.AddDays(-8)
+            },
+            new()
+            {
+                FullName = "Дмитро Іваненко",
+                Email = "dmytro.ivanenko@example.com",
+                Phone = "+380681234567",
+                Skills = "QA, test cases, Postman, SQL",
+                ResumeFilePath = "/resumes/dmytro-ivanenko.pdf",
+                ResumeSummary = "QA engineer з практикою ручного тестування, API-перевірок і підготовки тестової документації.",
+                ExperienceYears = 2,
+                CreatedAt = DateTime.UtcNow.AddDays(-5)
+            },
+            new()
+            {
+                FullName = "Ірина Бондар",
+                Email = "iryna.bondar@example.com",
+                Phone = "+380991112255",
+                Skills = "Recruiting, sourcing, interviews, CRM",
+                ResumeFilePath = "/resumes/iryna-bondar.pdf",
+                ResumeSummary = "Рекрутерка з досвідом пошуку IT-кандидатів, проведення HR-інтерв'ю та ведення кадрового резерву.",
+                ExperienceYears = 5,
+                CreatedAt = DateTime.UtcNow.AddDays(-2)
             }
         };
 
@@ -62,58 +87,42 @@ public static class SeedData
             new()
             {
                 Title = "Junior .NET Developer",
-                Description = "Розробка внутрішніх HR-сервісів на ASP.NET Core.",
-                Requirements = ".NET 8, C#, SQL, базове розуміння MVC.",
+                Description = "Розробка внутрішніх HR-сервісів на ASP.NET Core MVC.",
+                Requirements = ".NET 8, C#, SQL, базове розуміння MVC та Entity Framework Core.",
                 SalaryMin = 900,
                 SalaryMax = 1400,
                 Status = "Open",
-                CreatedAt = DateTime.UtcNow.AddDays(-9)
+                CreatedAt = DateTime.UtcNow.AddDays(-12)
             },
             new()
             {
                 Title = "HR Analyst",
                 Description = "Аналіз кандидатів, підготовка звітів і підтримка рекрутингових процесів.",
-                Requirements = "Excel, SQL, уважність до даних, комунікація.",
+                Requirements = "Excel, SQL, уважність до даних, комунікація, аналітичне мислення.",
                 SalaryMin = 800,
                 SalaryMax = 1300,
-                Status = "Open",
-                CreatedAt = DateTime.UtcNow.AddDays(-6)
+                Status = "Paused",
+                CreatedAt = DateTime.UtcNow.AddDays(-9)
             },
             new()
             {
-                Title = "Recruiter",
-                Description = "Пошук кандидатів, ведення бази резерву та організація співбесід.",
-                Requirements = "Досвід рекрутингу, інтерв'ювання, робота з CRM.",
+                Title = "QA Engineer",
+                Description = "Тестування веб-застосунків, підготовка тест-кейсів і контроль якості релізів.",
+                Requirements = "Test cases, Postman, SQL, базове розуміння HTTP та клієнт-серверної архітектури.",
                 SalaryMin = 700,
                 SalaryMax = 1200,
-                Status = "Paused",
-                CreatedAt = DateTime.UtcNow.AddDays(-4)
+                Status = "Closed",
+                CreatedAt = DateTime.UtcNow.AddDays(-6)
             }
         };
 
         var applications = new List<Application>
         {
-            new()
-            {
-                Candidate = candidates[0],
-                Vacancy = vacancies[0],
-                Status = "Offer",
-                AppliedAt = DateTime.UtcNow.AddDays(-8)
-            },
-            new()
-            {
-                Candidate = candidates[1],
-                Vacancy = vacancies[0],
-                Status = "Rejected",
-                AppliedAt = DateTime.UtcNow.AddDays(-5)
-            },
-            new()
-            {
-                Candidate = candidates[2],
-                Vacancy = vacancies[1],
-                Status = "Interview",
-                AppliedAt = DateTime.UtcNow.AddDays(-2)
-            }
+            new() { Candidate = candidates[0], Vacancy = vacancies[0], Status = "Hired", AppliedAt = DateTime.UtcNow.AddDays(-10) },
+            new() { Candidate = candidates[1], Vacancy = vacancies[0], Status = "Rejected", AppliedAt = DateTime.UtcNow.AddDays(-8) },
+            new() { Candidate = candidates[2], Vacancy = vacancies[1], Status = "Interview", AppliedAt = DateTime.UtcNow.AddDays(-5) },
+            new() { Candidate = candidates[3], Vacancy = vacancies[2], Status = "TestTask", AppliedAt = DateTime.UtcNow.AddDays(-3) },
+            new() { Candidate = candidates[4], Vacancy = vacancies[1], Status = "Screening", AppliedAt = DateTime.UtcNow.AddDays(-1) }
         };
 
         var admin = recruiters.Single(recruiter => recruiter.Login == "admin");
@@ -126,7 +135,7 @@ public static class SeedData
             {
                 Application = applications[0],
                 Recruiter = recruiter,
-                InterviewDate = DateTime.Now.AddDays(-6),
+                InterviewDate = DateTime.Now.AddDays(-7),
                 InterviewType = "Technical",
                 Result = "Passed",
                 Notes = "Кандидатка добре пояснила досвід з ASP.NET Core та EF Core."
@@ -136,9 +145,18 @@ public static class SeedData
                 Application = applications[2],
                 Recruiter = admin,
                 InterviewDate = DateTime.Now.AddDays(2),
-                InterviewType = "HR screening",
-                Result = "Planned",
-                Notes = "Потрібно перевірити мотивацію та очікування щодо ролі."
+                InterviewType = "HR",
+                Result = "Pending",
+                Notes = "Потрібно перевірити мотивацію та очікування щодо ролі HR Analyst."
+            },
+            new()
+            {
+                Application = applications[1],
+                Recruiter = recruiter,
+                InterviewDate = DateTime.Now.AddDays(-4),
+                InterviewType = "Final",
+                Result = "Failed",
+                Notes = "Кандидат не підтвердив потрібний рівень практичного досвіду."
             }
         };
 
@@ -151,16 +169,25 @@ public static class SeedData
                 Comment = "Сильна технічна база, структурні відповіді, хороша командна взаємодія.",
                 Score = 9,
                 Recommendation = "Hire",
-                CreatedAt = DateTime.UtcNow.AddDays(-6)
+                CreatedAt = DateTime.UtcNow.AddDays(-7)
             },
             new()
             {
                 Interview = interviews[1],
                 Recruiter = recruiter,
-                Comment = "Потрібно провести HR screening і уточнити релевантність досвіду.",
+                Comment = "Є потенціал для кадрового резерву, але варто уточнити очікування щодо аналітичних задач.",
                 Score = 7,
-                Recommendation = "Need more interviews",
+                Recommendation = "Maybe",
                 CreatedAt = DateTime.UtcNow.AddDays(-1)
+            },
+            new()
+            {
+                Interview = interviews[2],
+                Recruiter = interviewer,
+                Comment = "Недостатньо практичного досвіду для фінального етапу цієї вакансії.",
+                Score = 4,
+                Recommendation = "Reject",
+                CreatedAt = DateTime.UtcNow.AddDays(-4)
             }
         };
 
@@ -185,6 +212,16 @@ public static class SeedData
                 StressResistance = 7,
                 Leadership = 8,
                 OverallComment = "Сильні управлінські навички та зріла комунікація."
+            },
+            new()
+            {
+                Candidate = candidates[4],
+                Communication = 9,
+                Teamwork = 8,
+                Responsibility = 8,
+                StressResistance = 7,
+                Leadership = 9,
+                OverallComment = "Добрий профіль для рекрутингової команди та роботи з кандидатами."
             }
         };
 
@@ -246,25 +283,60 @@ public static class SeedData
             .ToListAsync();
     }
 
-    private static async Task AttachRecruitersToExistingRecordsAsync(ApplicationDbContext context, IReadOnlyList<Recruiter> recruiters)
+    private static async Task NormalizeExistingRecordsAsync(ApplicationDbContext context, IReadOnlyList<Recruiter> recruiters)
     {
         var admin = recruiters.FirstOrDefault(item => item.Role == "Admin") ?? recruiters.First();
         var interviewer = recruiters.FirstOrDefault(item => item.Role == "Interviewer") ?? admin;
 
-        var interviewsWithoutRecruiter = await context.Interviews
-            .Where(interview => interview.RecruiterId == null)
-            .ToListAsync();
-        foreach (var interview in interviewsWithoutRecruiter)
+        var candidates = await context.Candidates.ToListAsync();
+        foreach (var candidate in candidates.Where(candidate => string.IsNullOrWhiteSpace(candidate.ResumeFilePath)))
         {
-            interview.RecruiterId = admin.Id;
+            candidate.ResumeFilePath = $"/resumes/candidate-{candidate.Id}.pdf";
         }
 
-        var feedbacksWithoutRecruiter = await context.InterviewFeedbacks
-            .Where(feedback => feedback.RecruiterId == null)
-            .ToListAsync();
-        foreach (var feedback in feedbacksWithoutRecruiter)
+        var applications = await context.Applications.ToListAsync();
+        foreach (var application in applications)
         {
-            feedback.RecruiterId = interviewer.Id;
+            application.Status = application.Status switch
+            {
+                "In review" => "Screening",
+                "Accepted" => "Hired",
+                _ when !HrOptions.ApplicationStatuses.Contains(application.Status) => "New",
+                _ => application.Status
+            };
+        }
+
+        var interviews = await context.Interviews.ToListAsync();
+        foreach (var interview in interviews)
+        {
+            interview.RecruiterId ??= admin.Id;
+            interview.InterviewType = interview.InterviewType switch
+            {
+                "HR screening" => "HR",
+                "Online" => "HR",
+                _ when !HrOptions.InterviewTypes.Contains(interview.InterviewType) => "HR",
+                _ => interview.InterviewType
+            };
+            interview.Result = interview.Result switch
+            {
+                "Planned" => "Pending",
+                "Rescheduled" => "Pending",
+                _ when !HrOptions.InterviewResults.Contains(interview.Result) => "Pending",
+                _ => interview.Result
+            };
+        }
+
+        var feedbacks = await context.InterviewFeedbacks.ToListAsync();
+        foreach (var feedback in feedbacks)
+        {
+            feedback.RecruiterId ??= interviewer.Id;
+            feedback.Recommendation = feedback.Recommendation switch
+            {
+                "Reserve" => "Maybe",
+                "Need more interviews" => "Maybe",
+                _ when !HrOptions.FeedbackRecommendations.Contains(feedback.Recommendation) => "Maybe",
+                _ => feedback.Recommendation
+            };
         }
 
         await context.SaveChangesAsync();

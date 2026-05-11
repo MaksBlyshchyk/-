@@ -26,7 +26,7 @@ public class VacanciesController(ApplicationDbContext context) : Controller
 
         ViewData["CurrentFilter"] = search;
         ViewData["StatusFilter"] = status;
-        ViewData["Statuses"] = new SelectList(new[] { "Open", "Paused", "Closed" }, status);
+        ViewData["Statuses"] = new SelectList(HrOptions.VacancyStatuses, status);
 
         return View(await vacancies
             .OrderByDescending(vacancy => vacancy.CreatedAt)

@@ -9,7 +9,7 @@ public class InterviewFeedback
     [Display(Name = "Співбесіда")]
     public int InterviewId { get; set; }
 
-    [Display(Name = "Рекрутер")]
+    [Display(Name = "Автор відгуку")]
     public int? RecruiterId { get; set; }
 
     [Required]

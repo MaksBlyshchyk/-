@@ -69,6 +69,10 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .HasMaxLength(40)
                 .HasColumnType("TEXT");
 
+            b.Property<string>("ResumeFilePath")
+                .HasMaxLength(500)
+                .HasColumnType("TEXT");
+
             b.Property<string>("ResumeSummary")
                 .HasMaxLength(4000)
                 .HasColumnType("TEXT");

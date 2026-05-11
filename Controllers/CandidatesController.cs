@@ -58,7 +58,7 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("FullName,Email,Phone,Skills,ResumeSummary,ExperienceYears")] Candidate candidate)
+    public async Task<IActionResult> Create([Bind("FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears")] Candidate candidate)
     {
         if (!ModelState.IsValid)
         {
@@ -85,7 +85,7 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Phone,Skills,ResumeSummary,ExperienceYears,CreatedAt")] Candidate candidate)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears,CreatedAt")] Candidate candidate)
     {
         if (id != candidate.Id)
         {

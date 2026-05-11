@@ -9,7 +9,7 @@
         <h1 class="h2 mb-1">Відгуки після співбесід</h1>
         <p class="text-muted mb-0">Оцінки, рекомендації та коментарі інтерв'юерів із зазначенням автора.</p>
     </div>
-    <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати відгук</a>
+    <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати відгук</a>
 </div>
 
 <div class="card">
@@ -31,14 +31,7 @@
                 <tbody>
                 @foreach (var item in Model)
                 {
-                    var badgeClass = item.Recommendation switch
-                    {
-                        "Hire" => "text-bg-success",
-                        "Reserve" => "text-bg-info",
-                        "Reject" => "text-bg-danger",
-                        "Need more interviews" => "text-bg-warning",
-                        _ => "text-bg-secondary"
-                    };
+                    var badgeClass = HrOptions.FeedbackRecommendationBadge(item.Recommendation);
 
                     <tr>
                         <td>@item.Interview?.Application?.Candidate?.FullName</td>
@@ -50,12 +43,12 @@
                         <td class="text-end text-nowrap">
                             @if (User.IsInRole("Admin"))
                             {
-                                <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Edit</a>
+                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Редагувати</a>
                             }
-                            <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Details</a>
+                            <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Деталі</a>
                             @if (User.IsInRole("Admin"))
                             {
-                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Delete</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Видалити</a>
                             }
                         </td>
                     </tr>
@@ -69,7 +62,7 @@
         <div class="empty-state">
             <h2 class="h5">Відгуків ще немає</h2>
             <p class="text-muted mb-3">Додайте відгук після проведеної співбесіди.</p>
-            <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати відгук</a>
+            <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати відгук</a>
         </div>
     }
 </div>

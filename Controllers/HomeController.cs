@@ -30,10 +30,7 @@ public class HomeController : Controller
             InterviewCount = await _context.Interviews.CountAsync(),
             RecruiterCount = await _context.Recruiters.CountAsync(),
             AcceptedCandidateCount = await _context.Applications
-                .Where(application =>
-                    application.Status == "Accepted" ||
-                    application.Status == "Hired" ||
-                    application.Status == "Offer")
+                .Where(application => application.Status == "Hired")
                 .Select(application => application.CandidateId)
                 .Distinct()
                 .CountAsync(),

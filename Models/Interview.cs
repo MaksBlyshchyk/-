@@ -23,7 +23,7 @@ public class Interview
     [Required]
     [StringLength(80)]
     [Display(Name = "Результат")]
-    public string Result { get; set; } = "Planned";
+    public string Result { get; set; } = "Pending";
 
     [StringLength(2000)]
     [Display(Name = "Нотатки")]

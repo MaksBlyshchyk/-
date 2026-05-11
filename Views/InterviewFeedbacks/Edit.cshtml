@@ -30,10 +30,10 @@
     <div class="col-md-8">
         <label asp-for="Recommendation" class="form-label"></label>
         <select asp-for="Recommendation" class="form-select">
-            <option value="Hire">Hire</option>
-            <option value="Reserve">Reserve</option>
-            <option value="Reject">Reject</option>
-            <option value="Need more interviews">Need more interviews</option>
+            @foreach (var recommendation in HrOptions.FeedbackRecommendations)
+            {
+                <option value="@recommendation">@recommendation</option>
+            }
         </select>
         <span asp-validation-for="Recommendation" class="text-danger"></span>
     </div>
@@ -43,8 +43,8 @@
         <span asp-validation-for="Comment" class="text-danger"></span>
     </div>
     <div class="col-12 d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Зберегти</button>
-        <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+        <button type="submit" class="btn btn-success">Зберегти</button>
+        <a class="btn btn-secondary" asp-action="Index">Назад до списку</a>
     </div>
 </form>
 

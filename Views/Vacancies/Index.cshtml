@@ -9,7 +9,7 @@
         <h1 class="h2 mb-1">Вакансії</h1>
         <p class="text-muted mb-0">Відкриті, призупинені та закриті позиції компанії.</p>
     </div>
-    <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
+    <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
 </div>
 
 <form asp-action="Index" method="get" class="card mb-3">
@@ -48,13 +48,7 @@
                 <tbody>
                 @foreach (var item in Model)
                 {
-                    var badgeClass = item.Status switch
-                    {
-                        "Open" => "text-bg-success",
-                        "Paused" => "text-bg-warning",
-                        "Closed" => "text-bg-secondary",
-                        _ => "text-bg-primary"
-                    };
+                    var badgeClass = HrOptions.VacancyStatusBadge(item.Status);
 
                     <tr>
                         <td class="fw-semibold">@item.Title</td>
@@ -62,9 +56,9 @@
                         <td>@item.SalaryMin - @item.SalaryMax</td>
                         <td>@item.CreatedAt.ToLocalTime().ToString("d")</td>
                         <td class="text-end text-nowrap">
-                            <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Edit</a>
-                            <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Details</a>
-                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Delete</a>
+                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Редагувати</a>
+                            <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Деталі</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Видалити</a>
                         </td>
                     </tr>
                 }
@@ -77,7 +71,7 @@
         <div class="empty-state">
             <h2 class="h5">Вакансій не знайдено</h2>
             <p class="text-muted mb-3">Змініть фільтри або додайте першу вакансію.</p>
-            <a class="btn btn-primary" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
+            <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати вакансію</a>
         </div>
     }
 </div>

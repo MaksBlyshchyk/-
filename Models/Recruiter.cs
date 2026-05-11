@@ -14,7 +14,7 @@ public class Recruiter
     [Required]
     [EmailAddress]
     [StringLength(160)]
-    [Display(Name = "Email")]
+    [Display(Name = "Електронна пошта")]
     public string Email { get; set; } = string.Empty;
 
     [Required]
@@ -33,7 +33,7 @@ public class Recruiter
     [Display(Name = "Роль")]
     public string Role { get; set; } = "Recruiter";
 
-    [Display(Name = "Створено")]
+    [Display(Name = "Дата створення")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Interview> Interviews { get; set; } = new List<Interview>();

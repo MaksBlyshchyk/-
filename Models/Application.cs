@@ -14,7 +14,7 @@ public class Application
 
     [Required]
     [StringLength(40)]
-    [Display(Name = "Статус")]
+    [Display(Name = "Статус етапу відбору")]
     public string Status { get; set; } = "New";
 
     [Display(Name = "Дата подачі")]

@@ -33,8 +33,8 @@ public class InterviewsController(ApplicationDbContext context) : Controller
 
         ViewData["InterviewTypeFilter"] = interviewType;
         ViewData["ResultFilter"] = result;
-        ViewData["InterviewTypes"] = new SelectList(new[] { "HR screening", "Technical", "Final", "Online" }, interviewType);
-        ViewData["Results"] = new SelectList(new[] { "Planned", "Passed", "Failed", "Rescheduled" }, result);
+        ViewData["InterviewTypes"] = new SelectList(HrOptions.InterviewTypes, interviewType);
+        ViewData["Results"] = new SelectList(HrOptions.InterviewResults, result);
 
         return View(await interviews
             .OrderByDescending(interview => interview.InterviewDate)

@@ -34,7 +34,7 @@ public class Vacancy
     [Display(Name = "Статус")]
     public string Status { get; set; } = "Open";
 
-    [Display(Name = "Створено")]
+    [Display(Name = "Дата створення")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Application> Applications { get; set; } = new List<Application>();

@@ -26,6 +26,7 @@ erDiagram
         string Email
         string Phone
         string Skills
+        string ResumeFilePath
         string ResumeSummary
         int ExperienceYears
         datetime CreatedAt

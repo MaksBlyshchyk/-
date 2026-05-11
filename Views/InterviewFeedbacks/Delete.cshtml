@@ -13,11 +13,11 @@
     <dt class="col-sm-3">Оцінка</dt>
     <dd class="col-sm-9">@Model.Score/10</dd>
     <dt class="col-sm-3">Рекомендація</dt>
-    <dd class="col-sm-9">@Model.Recommendation</dd>
+    <dd class="col-sm-9"><span class="badge @HrOptions.FeedbackRecommendationBadge(Model.Recommendation)">@Model.Recommendation</span></dd>
 </dl>
 
 <form asp-action="Delete">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Видалити</button>
-    <a class="btn btn-outline-secondary" asp-action="Index">Назад</a>
+    <a class="btn btn-secondary" asp-action="Index">Назад до списку</a>
 </form>

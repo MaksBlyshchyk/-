@@ -23,16 +23,7 @@ public class ApplicationsController(ApplicationDbContext context) : Controller
         }
 
         ViewData["StatusFilter"] = status;
-        ViewData["Statuses"] = new SelectList(new[]
-        {
-            "New",
-            "In review",
-            "Interview",
-            "Offer",
-            "Accepted",
-            "Hired",
-            "Rejected"
-        }, status);
+        ViewData["Statuses"] = new SelectList(HrOptions.ApplicationStatuses, status);
 
         return View(await applications
             .OrderByDescending(application => application.AppliedAt)
