@@ -40,11 +40,18 @@
                     </div>
                 </form>
 
-                <div class="alert alert-light border mt-4 mb-0">
+                <div class="login-note mt-4">
+                    Нові користувачі створюються адміністратором у розділі «Рекрутери».
+                </div>
+
+                <div class="alert alert-light border mt-3 mb-0 demo-users-panel">
                     <div class="fw-semibold mb-2">Демо-користувачі</div>
                     @foreach (var user in demoUsers)
                     {
-                        <div class="small"><code>@user.Login</code> / <code>@user.Password</code> - @user.Role</div>
+                        <button class="demo-user-row" type="button" data-demo-login="@user.Login" data-demo-password="@user.Password" aria-label="Заповнити @user.Login">
+                            <span><code>@user.Login</code> / <code>@user.Password</code></span>
+                            <span class="badge @HrOptions.RecruiterRoleBadge(user.Role)">@user.Role</span>
+                        </button>
                     }
                 </div>
             </div>

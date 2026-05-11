@@ -1,14 +1,18 @@
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "Про систему";
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="mb-4">
-            <h1 class="h2 mb-2">Про HR Reserve System</h1>
-            <p class="text-muted mb-0">
-                HR Reserve System - навчальний веб-застосунок для управління кадровим резервом за варіантом №26.
-            </p>
+    <div class="col-lg-11">
+        <div class="dashboard-hero mb-4">
+            <div class="dashboard-hero-copy">
+                <span class="badge text-bg-primary mb-2">Варіант №26</span>
+                <h1 class="h2 mb-2">Про HR Reserve System</h1>
+                <p class="text-muted mb-0">
+                    HR Reserve System - навчальна ASP.NET Core MVC система для управління кадровим резервом, кандидатами,
+                    вакансіями, заявками, співбесідами, відгуками інтерв'юерів і оцінками soft skills.
+                </p>
+            </div>
         </div>
 
         <div class="row g-3 mb-4">
@@ -17,7 +21,8 @@
                     <div class="card-body">
                         <h2 class="h5">Мета системи</h2>
                         <p class="mb-0">
-                            Централізувати базу кандидатів, резюме, вакансій, заявок, співбесід, відгуків, soft skills і рекрутерів.
+                            Централізувати роботу рекрутера з кадровим резервом: зберігати базу кандидатів і резюме,
+                            вести вакансії, контролювати етапи відбору, планувати співбесіди та фіксувати рішення.
                         </p>
                     </div>
                 </div>
@@ -27,7 +32,8 @@
                     <div class="card-body">
                         <h2 class="h5">Проблема</h2>
                         <p class="mb-0">
-                            Без єдиної HR-системи рекрутеру складно бачити етапи відбору, історію співбесід, статуси вакансій та придатність кандидатів до майбутніх ролей.
+                            Без єдиної HR-системи інформація про кандидатів, статуси вакансій, історію співбесід,
+                            відгуки та soft skills розпорошена між таблицями, листуванням і нотатками.
                         </p>
                     </div>
                 </div>
@@ -35,26 +41,43 @@
         </div>
 
         <div class="card mb-4">
-            <div class="card-header bg-white">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Шлях кандидата</h2>
+            </div>
+            <div class="card-body">
+                <div class="candidate-path">
+                    <span>Кандидат</span>
+                    <span>Заявка</span>
+                    <span>Етап відбору</span>
+                    <span>Співбесіда</span>
+                    <span>Відгук</span>
+                    <span>Soft Skills</span>
+                    <span>Рішення</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
                 <h2 class="h5 mb-0">Основні сутності</h2>
             </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <span class="badge text-bg-primary mb-2">Candidates</span>
-                        <p class="mb-0">Кандидати з контактами, навичками, досвідом і резюме.</p>
+                        <p class="mb-0">Кандидати з контактами, навичками, досвідом, резюме та заявками.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="badge text-bg-success mb-2">Vacancies</span>
-                        <p class="mb-0">Вакансії з описом, вимогами, зарплатою та статусом.</p>
+                        <p class="mb-0">Вакансії з описом, вимогами, зарплатною вилкою та статусом.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="badge text-bg-info text-dark mb-2">Applications</span>
-                        <p class="mb-0">Заявки як етапи відбору кандидата на вакансію.</p>
+                        <p class="mb-0">Заявки, що зв'язують кандидата з вакансією та показують етап відбору.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="badge text-bg-warning text-dark mb-2">Interviews</span>
-                        <p class="mb-0">Співбесіди з датою, типом, результатом і рекрутером.</p>
+                        <p class="mb-0">Співбесіди з датою, типом, результатом, нотатками та відповідальним рекрутером.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="badge text-bg-secondary mb-2">Feedbacks</span>
@@ -72,11 +95,50 @@
             </div>
         </div>
 
+        <div class="row g-3 mb-4">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5">MVC-архітектура</h2>
+                        <p class="mb-0">
+                            Models описують сутності предметної області, Controllers обробляють запити й права доступу,
+                            Views відображають Razor UI, а ApplicationDbContext працює з SQLite через EF Core 8.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5">Стек технологій</h2>
+                        <p class="mb-0">
+                            .NET 8, ASP.NET Core MVC, Razor Views, Entity Framework Core 8, SQLite, Bootstrap,
+                            cookie authentication і HTML/CSS/JS для UI.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5">Ролі користувачів</h2>
+                        <p class="mb-0">
+                            Admin керує всією системою та створює рекрутерів. Recruiter працює з кандидатами,
+                            вакансіями, заявками й співбесідами. Interviewer переглядає співбесіди, додає відгуки
+                            та оцінює soft skills.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <h2 class="h5">Роль рекрутера</h2>
                 <p class="mb-0">
-                    Рекрутер веде кандидатів і вакансії, створює заявки, планує співбесіди, аналізує feedback, контролює статуси вакансій і підтримує кадровий резерв.
+                    Рекрутер бачить повний контекст кандидата: контакти, резюме, заявку, поточний етап відбору,
+                    історію співбесід, feedback інтерв'юерів, оцінку soft skills і фінальне рішення щодо вакансії
+                    або кадрового резерву.
                 </p>
             </div>
         </div>

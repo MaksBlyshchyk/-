@@ -5,7 +5,7 @@ namespace HRReserveSystem.ViewModels;
 public class LoginViewModel
 {
     [Required]
-    [Display(Name = "Логін")]
+    [Display(Name = "Логін або email")]
     public string Login { get; set; } = string.Empty;
 
     [Required]

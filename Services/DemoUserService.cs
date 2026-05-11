@@ -8,10 +8,13 @@ public class DemoUserService(ApplicationDbContext context)
 {
     public async Task<Recruiter?> ValidateUserAsync(string login, string password)
     {
+        var normalizedLogin = login.Trim().ToLower();
+
         return await context.Recruiters
             .AsNoTracking()
             .FirstOrDefaultAsync(recruiter =>
-                recruiter.Login.ToLower() == login.ToLower() &&
+                (recruiter.Login.ToLower() == normalizedLogin ||
+                 recruiter.Email.ToLower() == normalizedLogin) &&
                 recruiter.Password == password);
     }
 

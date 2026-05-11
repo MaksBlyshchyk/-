@@ -2,69 +2,224 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 (function () {
-    const storageKey = "hrreserve-theme";
     const root = document.documentElement;
+    const themeStorageKey = "hrreserve-theme";
+    const sidebarStorageKey = "hrreserve-sidebar-collapsed";
+    const notificationsStorageKey = "hrreserve-notifications-read";
+
+    function safeGet(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function safeSet(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (error) {
+            // Persistence is a progressive enhancement.
+        }
+    }
 
     function normalizeTheme(theme) {
-        return theme === "dark" ? "dark" : "light";
+        return theme === "light" ? "light" : "dark";
     }
 
     function getSavedTheme() {
-        try {
-            return normalizeTheme(localStorage.getItem(storageKey));
-        } catch (error) {
-            return "light";
-        }
-    }
-
-    function setSavedTheme(theme) {
-        try {
-            localStorage.setItem(storageKey, theme);
-        } catch (error) {
-            // Theme persistence is a progressive enhancement.
-        }
+        return normalizeTheme(safeGet(themeStorageKey));
     }
 
     function applyTheme(theme) {
         const normalizedTheme = normalizeTheme(theme);
-        root.setAttribute("data-theme", normalizedTheme);
+        const isDark = normalizedTheme === "dark";
 
+        root.setAttribute("data-theme", normalizedTheme);
         if (document.body) {
             document.body.setAttribute("data-theme", normalizedTheme);
         }
 
-        const toggle = document.getElementById("themeToggle");
-        if (!toggle) {
+        document.querySelectorAll("[data-theme-toggle]").forEach(function (toggle) {
+            const icon = toggle.querySelector(".theme-toggle-icon");
+            const text = toggle.querySelector(".theme-toggle-text");
+
+            toggle.setAttribute("aria-pressed", isDark.toString());
+            if (icon) {
+                icon.textContent = isDark ? "☀️" : "🌙";
+            }
+            if (text) {
+                text.textContent = isDark ? "Світла" : "Темна";
+            }
+        });
+    }
+
+    function initThemeToggles() {
+        document.querySelectorAll("[data-theme-toggle]").forEach(function (toggle) {
+            toggle.addEventListener("click", function () {
+                const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+                safeSet(themeStorageKey, nextTheme);
+                applyTheme(nextTheme);
+            });
+        });
+    }
+
+    function initSidebar() {
+        const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+        const sidebar = document.querySelector(".app-sidebar");
+
+        if (!toggles.length || !sidebar || !document.body) {
             return;
         }
 
-        const isDark = normalizedTheme === "dark";
-        const icon = toggle.querySelector(".theme-toggle-icon");
-        const text = toggle.querySelector(".theme-toggle-text");
+        function isDesktop() {
+            return window.matchMedia("(min-width: 992px)").matches;
+        }
 
-        toggle.setAttribute("aria-pressed", isDark.toString());
-        if (icon) {
-            icon.textContent = isDark ? "☀️" : "🌙";
+        function applySidebarState(collapsed) {
+            const shouldCollapse = collapsed && isDesktop();
+            document.body.classList.toggle("sidebar-collapsed", shouldCollapse);
+
+            toggles.forEach(function (toggle) {
+                toggle.setAttribute("aria-expanded", (!shouldCollapse).toString());
+                toggle.classList.toggle("is-active", shouldCollapse);
+            });
         }
-        if (text) {
-            text.textContent = isDark ? "Світла" : "Темна";
+
+        applySidebarState(safeGet(sidebarStorageKey) === "true");
+
+        toggles.forEach(function (toggle) {
+            toggle.addEventListener("click", function () {
+                const nextCollapsed = !document.body.classList.contains("sidebar-collapsed");
+                safeSet(sidebarStorageKey, nextCollapsed.toString());
+                applySidebarState(nextCollapsed);
+            });
+        });
+
+        window.addEventListener("resize", function () {
+            applySidebarState(safeGet(sidebarStorageKey) === "true");
+        });
+    }
+
+    function closeDropdowns(except) {
+        document.querySelectorAll("[data-dropdown]").forEach(function (dropdown) {
+            if (dropdown === except) {
+                return;
+            }
+
+            dropdown.classList.remove("is-open");
+            const toggle = dropdown.querySelector("[data-dropdown-toggle]");
+            if (toggle) {
+                toggle.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    function initDropdowns() {
+        document.querySelectorAll("[data-dropdown]").forEach(function (dropdown) {
+            const toggle = dropdown.querySelector("[data-dropdown-toggle]");
+            if (!toggle) {
+                return;
+            }
+
+            toggle.addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const willOpen = !dropdown.classList.contains("is-open");
+                closeDropdowns(dropdown);
+                dropdown.classList.toggle("is-open", willOpen);
+                toggle.setAttribute("aria-expanded", willOpen.toString());
+            });
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!event.target.closest("[data-dropdown]")) {
+                closeDropdowns();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeDropdowns();
+            }
+        });
+    }
+
+    function initNotifications() {
+        const toggle = document.querySelector("[data-notification-toggle]");
+        const dot = document.querySelector("[data-notification-dot]");
+        const list = document.querySelector("[data-notification-list]");
+        const empty = document.querySelector("[data-notification-empty]");
+
+        function syncDot() {
+            if (!dot) {
+                return;
+            }
+
+            const isRead = safeGet(notificationsStorageKey) === "true";
+            dot.hidden = isRead;
+            dot.classList.toggle("is-hidden", isRead);
         }
+
+        if (list && empty) {
+            const hasMessages = list.querySelectorAll(".notification-item").length > 0;
+            list.classList.toggle("d-none", !hasMessages);
+            empty.classList.toggle("d-none", hasMessages);
+        }
+
+        syncDot();
+
+        if (toggle) {
+            toggle.addEventListener("click", function () {
+                safeSet(notificationsStorageKey, "true");
+                syncDot();
+            });
+        }
+    }
+
+    function initGlobalSearch() {
+        document.querySelectorAll("[data-global-search]").forEach(function (form) {
+            form.addEventListener("submit", function (event) {
+                const input = form.querySelector('input[type="search"]');
+                if (!input || input.value.trim()) {
+                    return;
+                }
+
+                event.preventDefault();
+                input.focus();
+            });
+        });
+    }
+
+    function initDemoLoginFill() {
+        const loginInput = document.getElementById("Login");
+        const passwordInput = document.getElementById("Password");
+
+        if (!loginInput || !passwordInput) {
+            return;
+        }
+
+        document.querySelectorAll("[data-demo-login][data-demo-password]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                loginInput.value = button.getAttribute("data-demo-login") || "";
+                passwordInput.value = button.getAttribute("data-demo-password") || "";
+                loginInput.dispatchEvent(new Event("input", { bubbles: true }));
+                passwordInput.dispatchEvent(new Event("input", { bubbles: true }));
+                passwordInput.focus();
+            });
+        });
     }
 
     applyTheme(getSavedTheme());
 
     document.addEventListener("DOMContentLoaded", function () {
         applyTheme(getSavedTheme());
-
-        const toggle = document.getElementById("themeToggle");
-        if (!toggle) {
-            return;
-        }
-
-        toggle.addEventListener("click", function () {
-            const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-            setSavedTheme(nextTheme);
-            applyTheme(nextTheme);
-        });
+        initThemeToggles();
+        initSidebar();
+        initDropdowns();
+        initNotifications();
+        initGlobalSearch();
+        initDemoLoginFill();
     });
 })();

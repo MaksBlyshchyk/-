@@ -22,6 +22,18 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        var applicationStatusCounts = await _context.Applications
+            .AsNoTracking()
+            .GroupBy(application => application.Status)
+            .Select(group => new { Status = group.Key, Count = group.Count() })
+            .ToDictionaryAsync(item => item.Status, item => item.Count);
+
+        var vacancyStatusCounts = await _context.Vacancies
+            .AsNoTracking()
+            .GroupBy(vacancy => vacancy.Status)
+            .Select(group => new { Status = group.Key, Count = group.Count() })
+            .ToDictionaryAsync(item => item.Status, item => item.Count);
+
         var dashboard = new DashboardViewModel
         {
             CandidateCount = await _context.Candidates.CountAsync(),
@@ -59,7 +71,9 @@ public class HomeController : Controller
                 .Where(interview => interview.InterviewDate >= DateTime.Now)
                 .OrderBy(interview => interview.InterviewDate)
                 .Take(5)
-                .ToListAsync()
+                .ToListAsync(),
+            ApplicationStatusCounts = applicationStatusCounts,
+            VacancyStatusCounts = vacancyStatusCounts
         };
 
         return View(dashboard);

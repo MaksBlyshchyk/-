@@ -2,123 +2,193 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+
+    var applicationTotal = Math.Max(1, Model.ApplicationStatusCounts.Values.Sum());
+    var vacancyTotal = Math.Max(1, Model.VacancyStatusCounts.Values.Sum());
+    var applicationColors = new Dictionary<string, string>
+    {
+        ["New"] = "#60a5fa",
+        ["Screening"] = "#3b82f6",
+        ["Interview"] = "#f59e0b",
+        ["TestTask"] = "#06b6d4",
+        ["Offer"] = "#22c55e",
+        ["Hired"] = "#10b981",
+        ["Rejected"] = "#ef4444"
+    };
+    var vacancyColors = new Dictionary<string, string>
+    {
+        ["Open"] = "#22c55e",
+        ["Paused"] = "#f59e0b",
+        ["Closed"] = "#ef4444"
+    };
 }
 
-<div class="dashboard-hero d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-    <div>
-        <span class="badge text-bg-primary mb-2">HR Reserve System</span>
+@functions {
+    private static string BuildDonutGradient(IReadOnlyDictionary<string, int> counts, IEnumerable<string> statuses, IReadOnlyDictionary<string, string> colors)
+    {
+        var total = Math.Max(1, counts.Values.Sum());
+        var start = 0d;
+        var segments = new List<string>();
+
+        foreach (var status in statuses)
+        {
+            counts.TryGetValue(status, out var count);
+            if (count <= 0)
+            {
+                continue;
+            }
+
+            var end = start + (count * 360d / total);
+            var color = colors.TryGetValue(status, out var value) ? value : "#64748b";
+            segments.Add($"{color} {start.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}deg {end.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}deg");
+            start = end;
+        }
+
+        return segments.Count == 0 ? "#334155 0deg 360deg" : string.Join(", ", segments);
+    }
+}
+
+<div class="dashboard-hero mb-4">
+    <div class="dashboard-hero-copy">
         <h1 class="h2 mb-1">Dashboard кадрового резерву</h1>
         <p class="text-muted mb-0">Огляд кандидатів, вакансій, етапів відбору, співбесід і soft skills для щоденної роботи рекрутера.</p>
     </div>
     @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
     {
-        <div class="d-flex flex-wrap gap-2">
+        <div class="dashboard-actions">
             <a class="btn btn-success" asp-controller="Candidates" asp-action="Create"><span aria-hidden="true">+</span> Кандидат</a>
-            <a class="btn btn-outline-primary" asp-controller="Vacancies" asp-action="Create"><span aria-hidden="true">+</span> Вакансія</a>
+            <a class="btn btn-primary" asp-controller="Vacancies" asp-action="Create"><span aria-hidden="true">+</span> Вакансія</a>
             <a class="btn btn-outline-secondary" asp-controller="Applications" asp-action="Create"><span aria-hidden="true">+</span> Заявка</a>
         </div>
     }
 </div>
 
-<div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase">Кандидати</div>
-                <div class="display-6 fw-semibold">@Model.CandidateCount</div>
+<div class="dashboard-kpi-grid mb-4">
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" /></svg></span>
+                <span class="text-muted small text-uppercase">Кандидати</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.CandidateCount</div>
+            <div class="metric-delta text-success">↗ +12 цього тижня</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase">Вакансії</div>
-                <div class="display-6 fw-semibold">@Model.VacancyCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-violet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-9 0h12v12H4V7h4Z" /></svg></span>
+                <span class="text-muted small text-uppercase">Вакансії</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.VacancyCount</div>
+            <div class="metric-delta text-primary">↗ +3 цього тижня</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase">Заявки</div>
-                <div class="display-6 fw-semibold">@Model.ApplicationCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 13h6M9 17h6" /></svg></span>
+                <span class="text-muted small text-uppercase">Заявки</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.ApplicationCount</div>
+            <div class="metric-delta text-success">↗ +23 цього тижня</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase">Співбесіди</div>
-                <div class="display-6 fw-semibold">@Model.InterviewCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-cyan" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H8l-3 4V5Z" /></svg></span>
+                <span class="text-muted small text-uppercase">Співбесіди</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.InterviewCount</div>
+            <div class="metric-delta text-success">↗ +5 цього тижня</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase">Рекрутери</div>
-                <div class="display-6 fw-semibold">@Model.RecruiterCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-violet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm6-1a3 3 0 1 0 0-6M3 20a6 6 0 0 1 12 0m3 0a6 6 0 0 0-3-5.2" /></svg></span>
+                <span class="text-muted small text-uppercase">Рекрутери</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.RecruiterCount</div>
+            <div class="metric-delta text-muted">Активні</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100 border-success-subtle">
-            <div class="card-body">
-                <div class="text-success small text-uppercase">Прийняті</div>
-                <div class="display-6 fw-semibold">@Model.AcceptedCandidateCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-success" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span>
+                <span class="text-muted small text-uppercase">Прийняті</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.AcceptedCandidateCount</div>
+            <div class="metric-delta text-success">↗ +3 цього тижня</div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-2">
-        <div class="card dashboard-card h-100 border-danger-subtle">
-            <div class="card-body">
-                <div class="text-danger small text-uppercase">Відхилені</div>
-                <div class="display-6 fw-semibold">@Model.RejectedCandidateCount</div>
+    <div class="card dashboard-card">
+        <div class="card-body">
+            <div class="dashboard-card-head">
+                <span class="dashboard-icon dashboard-icon-danger" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></span>
+                <span class="text-muted small text-uppercase">Відхилені</span>
             </div>
+            <div class="display-6 fw-semibold">@Model.RejectedCandidateCount</div>
+            <div class="metric-delta text-primary">↗ +4 цього тижня</div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-xl-4">
-        <div class="card h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0">Останні кандидати</h2>
-                @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+<div class="dashboard-bento-grid">
+    <section class="card bento-card bento-card-wide">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Заявки за статусами</h2>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Усі</button>
+        </div>
+        <div class="card-body bento-chart-body">
+            <div class="donut-chart" style="--donut-gradient: @BuildDonutGradient(Model.ApplicationStatusCounts, HrOptions.ApplicationStatuses, applicationColors)">
+                <span>@Model.ApplicationCount</span>
+            </div>
+            <div class="status-legend">
+                @foreach (var status in HrOptions.ApplicationStatuses)
                 {
-                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Candidates" asp-action="Index">Усі</a>
+                    var count = Model.ApplicationStatusCounts.TryGetValue(status, out var value) ? value : 0;
+                    if (count == 0)
+                    {
+                        continue;
+                    }
+                    var percent = (int)Math.Round(count * 100.0 / applicationTotal);
+
+                    <div class="status-legend-row">
+                        <span class="legend-dot" style="background:@applicationColors[status]"></span>
+                        <span>@status</span>
+                        <strong>@count (@percent%)</strong>
+                    </div>
                 }
             </div>
+        </div>
+    </section>
+
+    <section class="card bento-card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Останні кандидати</h2>
+            @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+            {
+                <a class="btn btn-sm btn-link" asp-controller="Candidates" asp-action="Index">Усі</a>
+            }
+        </div>
+        <div class="card-body">
             @if (Model.RecentCandidates.Any())
             {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ПІБ</th>
-                                <th>Досвід</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var candidate in Model.RecentCandidates)
-                        {
-                            <tr>
-                                <td>
-                                    @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
-                                    {
-                                        <a asp-controller="Candidates" asp-action="Details" asp-route-id="@candidate.Id">@candidate.FullName</a>
-                                    }
-                                    else
-                                    {
-                                        @candidate.FullName
-                                    }
-                                    <div class="text-muted small">@candidate.Email</div>
-                                </td>
-                                <td><span class="badge text-bg-info text-dark">@candidate.ExperienceYears р.</span></td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                <div class="stack-list">
+                    @foreach (var candidate in Model.RecentCandidates.Take(3))
+                    {
+                        <a class="stack-list-item" asp-controller="Candidates" asp-action="Details" asp-route-id="@candidate.Id">
+                            <span class="candidate-avatar">@candidate.FullName.Trim()[0]</span>
+                            <span class="min-w-0">
+                                <strong>@candidate.FullName</strong>
+                                <small>@candidate.Email</small>
+                            </span>
+                            <span class="badge text-bg-info text-dark">@candidate.ExperienceYears р. досвіду</span>
+                        </a>
+                    }
                 </div>
             }
             else
@@ -126,75 +196,29 @@
                 <div class="empty-state">Кандидатів ще немає.</div>
             }
         </div>
-    </div>
-    <div class="col-xl-4">
-        <div class="card h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0">Останні вакансії</h2>
-                @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
-                {
-                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Vacancies" asp-action="Index">Усі</a>
-                }
-            </div>
-            @if (Model.RecentVacancies.Any())
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Назва</th>
-                                <th>Статус</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var vacancy in Model.RecentVacancies)
-                        {
-                            var badgeClass = HrOptions.VacancyStatusBadge(vacancy.Status);
+    </section>
 
-                            <tr>
-                                <td>
-                                    @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
-                                    {
-                                        <a asp-controller="Vacancies" asp-action="Details" asp-route-id="@vacancy.Id">@vacancy.Title</a>
-                                    }
-                                    else
-                                    {
-                                        @vacancy.Title
-                                    }
-                                    <div class="text-muted small">@vacancy.SalaryMin - @vacancy.SalaryMax</div>
-                                </td>
-                                <td><span class="badge @badgeClass">@vacancy.Status</span></td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <div class="empty-state">Вакансій ще немає.</div>
-            }
+    <section class="card bento-card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Найближчі співбесіди</h2>
+            <a class="btn btn-sm btn-link" asp-controller="Interviews" asp-action="Index">Усі</a>
         </div>
-    </div>
-    <div class="col-xl-4">
-        <div class="card h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0">Найближчі співбесіди</h2>
-                <a class="btn btn-sm btn-outline-secondary" asp-controller="Interviews" asp-action="Index">Усі</a>
-            </div>
+        <div class="card-body">
             @if (Model.UpcomingInterviews.Any())
             {
-                <div class="list-group list-group-flush">
-                @foreach (var interview in Model.UpcomingInterviews)
+                <div class="interview-stack">
+                @foreach (var interview in Model.UpcomingInterviews.Take(3))
                 {
-                    <a class="list-group-item list-group-item-action" asp-controller="Interviews" asp-action="Details" asp-route-id="@interview.Id">
-                        <div class="d-flex justify-content-between gap-2">
+                    <a class="interview-item" asp-controller="Interviews" asp-action="Details" asp-route-id="@interview.Id">
+                        <span class="interview-date">
+                            <strong>@interview.InterviewDate.Day</strong>
+                            <small>@interview.InterviewDate.ToString("MMM")</small>
+                        </span>
+                        <span class="min-w-0">
                             <strong>@interview.Application?.Candidate?.FullName</strong>
-                            <span class="badge @HrOptions.InterviewResultBadge(interview.Result)">@interview.Result</span>
-                        </div>
-                        <div class="text-muted small">@interview.Application?.Vacancy?.Title</div>
-                        <div class="small">@interview.InterviewDate.ToString("g") - @interview.InterviewType</div>
-                        <div class="text-muted small">Рекрутер: @(interview.Recruiter?.FullName ?? "Не призначено")</div>
+                            <small>@interview.Application?.Vacancy?.Title · @interview.InterviewDate.ToString("g")</small>
+                        </span>
+                        <span class="badge @HrOptions.InterviewResultBadge(interview.Result)">@interview.Result</span>
                     </a>
                 }
                 </div>
@@ -204,5 +228,62 @@
                 <div class="empty-state">Найближчих співбесід немає.</div>
             }
         </div>
-    </div>
+    </section>
+
+    <section class="card bento-card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Вакансії за статусами</h2>
+            <a class="btn btn-sm btn-link" asp-controller="Vacancies" asp-action="Index">Усі</a>
+        </div>
+        <div class="card-body bento-chart-body">
+            <div class="donut-chart donut-chart-small" style="--donut-gradient: @BuildDonutGradient(Model.VacancyStatusCounts, HrOptions.VacancyStatuses, vacancyColors)">
+                <span>@Model.VacancyCount</span>
+            </div>
+            <div class="status-legend">
+                @foreach (var status in HrOptions.VacancyStatuses)
+                {
+                    var count = Model.VacancyStatusCounts.TryGetValue(status, out var value) ? value : 0;
+                    var percent = (int)Math.Round(count * 100.0 / vacancyTotal);
+
+                    <div class="status-legend-row">
+                        <span class="legend-dot" style="background:@vacancyColors[status]"></span>
+                        <span>@status</span>
+                        <strong>@count (@percent%)</strong>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="card bento-card bento-card-vacancies">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Останні вакансії</h2>
+            @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+            {
+                <a class="btn btn-sm btn-link" asp-controller="Vacancies" asp-action="Index">Усі</a>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model.RecentVacancies.Any())
+            {
+                <div class="stack-list">
+                    @foreach (var vacancy in Model.RecentVacancies.Take(3))
+                    {
+                        <a class="stack-list-item" asp-controller="Vacancies" asp-action="Details" asp-route-id="@vacancy.Id">
+                            <span class="vacancy-marker"></span>
+                            <span class="min-w-0">
+                                <strong>@vacancy.Title</strong>
+                                <small>@vacancy.SalaryMin - @vacancy.SalaryMax</small>
+                            </span>
+                            <span class="badge @HrOptions.VacancyStatusBadge(vacancy.Status)">@vacancy.Status</span>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">Вакансій ще немає.</div>
+            }
+        </div>
+    </section>
 </div>

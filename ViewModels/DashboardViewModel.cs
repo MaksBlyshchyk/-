@@ -23,4 +23,8 @@ public class DashboardViewModel
     public IReadOnlyList<Vacancy> RecentVacancies { get; set; } = [];
 
     public IReadOnlyList<Interview> UpcomingInterviews { get; set; } = [];
+
+    public IReadOnlyDictionary<string, int> ApplicationStatusCounts { get; set; } = new Dictionary<string, int>();
+
+    public IReadOnlyDictionary<string, int> VacancyStatusCounts { get; set; } = new Dictionary<string, int>();
 }
