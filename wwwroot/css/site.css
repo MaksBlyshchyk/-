@@ -1,3 +1,15 @@
+:root {
+  --app-bg: #f4f6f9;
+  --app-surface: #ffffff;
+  --app-border: #e3e7ed;
+  --app-text: #1d2939;
+  --app-muted: #667085;
+  --app-heading: #101828;
+  --app-primary-soft: #e8f1ff;
+  --app-primary: #0b5ed7;
+  --app-shadow: 0 0.35rem 1rem rgba(16, 24, 40, 0.06);
+}
+
 html {
   font-size: 14px;
 }
@@ -19,27 +31,41 @@ html {
 
 body {
   margin-bottom: 60px;
-  background: #f4f6f9;
+  background: var(--app-bg);
+  color: var(--app-text);
+  text-rendering: optimizeLegibility;
 }
 
 main {
+  padding-bottom: 1.5rem;
   padding-top: 1.25rem;
 }
 
 .app-container {
   max-width: 1440px;
+  padding-left: clamp(1rem, 2vw, 1.75rem);
+  padding-right: clamp(1rem, 2vw, 1.75rem);
 }
 
 .navbar {
   min-height: 64px;
+  box-shadow: 0 0.25rem 1rem rgba(16, 24, 40, 0.05);
 }
 
 .navbar-brand {
   letter-spacing: 0;
 }
 
+.app-brand {
+  color: var(--app-heading);
+}
+
 .nav-link {
   border-radius: 0.5rem;
+  font-weight: 500;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .nav-link:hover {
@@ -47,27 +73,54 @@ main {
 }
 
 .nav-link.active {
-  background-color: #e8f1ff;
-  color: #0b5ed7 !important;
+  background-color: var(--app-primary-soft);
+  color: var(--app-primary) !important;
   font-weight: 700;
 }
 
+.app-user-chip {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  color: #344054;
+  display: inline-flex;
+  gap: 0.25rem;
+  min-height: 32px;
+  padding: 0.25rem 0.6rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--app-heading);
+  letter-spacing: 0;
+}
+
 .dashboard-hero {
-  background: #fff;
-  border: 1px solid #e3e7ed;
-  border-radius: 0.75rem;
-  box-shadow: 0 0.5rem 1.5rem rgba(16, 24, 40, 0.05);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 0.5rem;
+  box-shadow: var(--app-shadow);
   padding: 1.25rem;
 }
 
 .card {
   border-radius: 0.5rem;
-  border-color: #e3e7ed;
-  box-shadow: 0 0.25rem 0.75rem rgba(16, 24, 40, 0.04);
+  border-color: var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.card-header {
+  border-bottom-color: var(--app-border);
 }
 
 .dashboard-card .card-body {
   min-height: 112px;
+  padding: 1.15rem;
 }
 
 .login-card {
@@ -76,26 +129,37 @@ main {
 
 .badge {
   font-weight: 600;
+  letter-spacing: 0;
+  padding: 0.4em 0.6em;
 }
 
 .table {
-  background-color: #fff;
-  color: #1d2939;
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  margin-bottom: 0;
+  vertical-align: middle;
 }
 
 .table th {
+  border-bottom-color: #d0d5dd;
   color: #475467;
   font-size: 0.875rem;
   font-weight: 700;
+  letter-spacing: 0;
+  padding-bottom: 0.8rem;
+  padding-top: 0.8rem;
+  white-space: nowrap;
 }
 
 .table td {
-  color: #1d2939;
+  color: var(--app-text);
+  padding-bottom: 0.8rem;
+  padding-top: 0.8rem;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
   --bs-table-bg-type: #f8fafc;
-  color: #1d2939;
+  color: var(--app-text);
 }
 
 .table-hover > tbody > tr:hover > * {
@@ -109,17 +173,17 @@ main {
 }
 
 .empty-state {
-  color: #667085;
+  color: var(--app-muted);
   padding: 2.5rem;
   text-align: center;
 }
 
 main > form.row.g-3 {
-  background: #fff;
-  border: 1px solid #e3e7ed;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 0.5rem;
-  box-shadow: 0 0.25rem 0.75rem rgba(16, 24, 40, 0.04);
-  padding: 1rem;
+  box-shadow: var(--app-shadow);
+  padding: 1.15rem;
 }
 
 .form-control,
@@ -127,8 +191,15 @@ main > form.row.g-3 {
   border-color: #d0d5dd;
 }
 
+.form-label {
+  color: #344054;
+  font-weight: 600;
+}
+
 .btn {
   border-radius: 0.45rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .btn [aria-hidden="true"] {
@@ -141,4 +212,19 @@ main > form.row.g-3 {
 
 textarea {
   resize: vertical;
+}
+
+.app-footer {
+  font-size: 0.925rem;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding-top: 0.75rem;
+  }
+
+  .app-user-chip {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+  }
 }

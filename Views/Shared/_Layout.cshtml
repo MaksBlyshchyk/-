@@ -11,11 +11,12 @@
 <body>
     @{
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     }
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">HR Reserve</a>
+                <a class="navbar-brand fw-semibold app-brand" asp-area="" asp-controller="Home" asp-action="Index">HR Reserve</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -25,7 +26,7 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark @(currentController == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
+                                <a class="nav-link text-dark @((currentController == "Home" && currentAction == "Index") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
                             </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
                             {
@@ -62,14 +63,14 @@
                             }
                         }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">Про систему</a>
+                            <a class="nav-link text-dark @((currentController == "Home" && currentAction == "About") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="About">Про систему</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav align-items-lg-center">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item me-lg-2">
-                                <span class="navbar-text small">
+                                <span class="navbar-text small app-user-chip">
                                     @User.FindFirst("DisplayName")?.Value
                                     <span class="badge text-bg-primary ms-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
                                 </span>
@@ -95,7 +96,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-white">
+    <footer class="border-top footer text-muted bg-white app-footer">
         <div class="container-fluid">
             &copy; 2026 - HR Reserve System - <a asp-area="" asp-controller="Home" asp-action="About">Про систему</a>
         </div>
