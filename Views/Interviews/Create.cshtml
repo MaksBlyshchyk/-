@@ -8,9 +8,15 @@
 
 <form asp-action="Create" class="row g-3">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-12">
+        <div class="alert alert-info mb-0">
+            Після збереження система створить email-сповіщення. Якщо SMTP не налаштований, повідомлення збережеться у папці EmailOutbox.
+        </div>
+    </div>
     <div class="col-md-6">
         <label asp-for="ApplicationId" class="form-label"></label>
         <select asp-for="ApplicationId" class="form-select" asp-items="ViewBag.ApplicationId"></select>
+        <div class="form-text">Список формується із заявок. Якщо потрібної вакансії немає, створіть вакансію і заявку для кандидата.</div>
         <span asp-validation-for="ApplicationId" class="text-danger"></span>
     </div>
     <div class="col-md-6">

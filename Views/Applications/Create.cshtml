@@ -16,6 +16,7 @@
     <div class="col-md-6">
         <label asp-for="VacancyId" class="form-label"></label>
         <select asp-for="VacancyId" class="form-select" asp-items="ViewBag.VacancyId"></select>
+        <div class="form-text">У списку показані тільки вакансії, які вже створені в розділі "Вакансії".</div>
         <span asp-validation-for="VacancyId" class="text-danger"></span>
     </div>
     <div class="col-md-6">

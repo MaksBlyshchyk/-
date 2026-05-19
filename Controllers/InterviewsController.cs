@@ -86,6 +86,33 @@ public class InterviewsController(ApplicationDbContext context, IEmailNotificati
         return File(Encoding.UTF8.GetBytes(BuildIcsCalendar(items)), "text/calendar; charset=utf-8", fileName);
     }
 
+    public async Task<IActionResult> GoogleCalendar(int id)
+    {
+        var interview = await context.Interviews
+            .AsNoTracking()
+            .Include(item => item.Application)
+                .ThenInclude(application => application!.Candidate)
+            .Include(item => item.Application)
+                .ThenInclude(application => application!.Vacancy)
+            .Include(item => item.Recruiter)
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        if (interview is null)
+        {
+            return NotFound();
+        }
+
+        var start = DateTime.SpecifyKind(interview.InterviewDate, DateTimeKind.Local).ToUniversalTime();
+        var end = start.AddHours(1);
+        var url = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+            + $"&text={Uri.EscapeDataString(BuildCalendarSummary(interview))}"
+            + $"&dates={FormatIcsDate(start)}/{FormatIcsDate(end)}"
+            + $"&details={Uri.EscapeDataString(BuildCalendarDescription(interview))}"
+            + $"&location={Uri.EscapeDataString("HRReserveSystem")}";
+
+        return Redirect(url);
+    }
+
     public async Task<IActionResult> Details(int? id)
     {
         if (id is null)
@@ -267,6 +294,21 @@ public class InterviewsController(ApplicationDbContext context, IEmailNotificati
         return await context.Interviews.AnyAsync(item => item.Id == id);
     }
 
+    private static string BuildCalendarSummary(Interview interview)
+    {
+        var candidate = interview.Application?.Candidate?.FullName ?? "Кандидат";
+        var vacancy = interview.Application?.Vacancy?.Title ?? "Вакансія";
+        return $"{interview.InterviewType}: {candidate} - {vacancy}";
+    }
+
+    private static string BuildCalendarDescription(Interview interview)
+    {
+        var recruiter = interview.Recruiter?.FullName ?? "Не призначено";
+        var notes = string.IsNullOrWhiteSpace(interview.Notes) ? "Немає" : interview.Notes;
+
+        return $"Результат: {interview.Result}\nРекрутер: {recruiter}\nНотатки: {notes}";
+    }
+
     private static string BuildIcsCalendar(IEnumerable<Interview> interviews)
     {
         var builder = new StringBuilder();
@@ -280,11 +322,8 @@ public class InterviewsController(ApplicationDbContext context, IEmailNotificati
         {
             var start = DateTime.SpecifyKind(interview.InterviewDate, DateTimeKind.Local).ToUniversalTime();
             var end = start.AddHours(1);
-            var candidate = interview.Application?.Candidate?.FullName ?? "Кандидат";
-            var vacancy = interview.Application?.Vacancy?.Title ?? "Вакансія";
-            var recruiter = interview.Recruiter?.FullName ?? "Не призначено";
-            var summary = $"{interview.InterviewType}: {candidate} - {vacancy}";
-            var description = $"Результат: {interview.Result}\\nРекрутер: {recruiter}\\nНотатки: {interview.Notes}";
+            var summary = BuildCalendarSummary(interview);
+            var description = BuildCalendarDescription(interview);
 
             builder.AppendLine("BEGIN:VEVENT");
             builder.AppendLine($"UID:hrreserve-interview-{interview.Id}@hrreserve.local");

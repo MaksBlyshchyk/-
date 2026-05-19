@@ -8,6 +8,7 @@
     <h1 class="h2 mb-0">Співбесіда #@Model.Id</h1>
     <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-outline-success" asp-controller="InterviewFeedbacks" asp-action="Create" asp-route-interviewId="@Model.Id"><span aria-hidden="true">+</span> Додати відгук</a>
+        <a class="btn btn-outline-primary" asp-action="GoogleCalendar" asp-route-id="@Model.Id" target="_blank" rel="noopener">Google Calendar</a>
         <a class="btn btn-outline-primary" asp-action="ExportIcs" asp-route-id="@Model.Id">Експорт .ics</a>
         @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
         {
