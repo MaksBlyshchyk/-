@@ -10,7 +10,7 @@
         <p class="text-muted mb-0">База кадрового резерву з контактами, навичками та досвідом.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-primary" asp-action="ExportCsv" asp-route-search="@ViewData["CurrentFilter"]" asp-route-minExperience="@ViewData["MinExperience"]"><span aria-hidden="true">CSV</span> Експорт</a>
+        <a class="btn btn-outline-primary" asp-action="ExportCsv" asp-route-search="@ViewData["CurrentFilter"]" asp-route-minExperience="@ViewData["MinExperience"]" title="Завантажити поточний список кандидатів з урахуванням пошуку і фільтра">Експорт у Excel/CSV</a>
         <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Додати кандидата</a>
     </div>
 </div>
@@ -28,6 +28,9 @@
         <div class="col-sm-6 col-lg-3 d-flex gap-2">
             <button class="btn btn-outline-primary flex-fill" type="submit">Фільтрувати</button>
             <a class="btn btn-outline-secondary" asp-action="Index">Скинути</a>
+        </div>
+        <div class="col-12">
+            <div class="form-text">Експорт у Excel/CSV завантажує саме той список, який зараз відфільтрований на сторінці.</div>
         </div>
     </div>
 </form>
@@ -59,7 +62,7 @@
                         <td class="text-end text-nowrap">
                             <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Редагувати</a>
                             <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Деталі</a>
-                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Видалити</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
                         </td>
                     </tr>
                 }

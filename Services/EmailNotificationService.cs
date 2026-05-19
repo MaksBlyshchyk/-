@@ -54,9 +54,17 @@ public class EmailNotificationService(
             return;
         }
 
+        var originalRecipients = recipients;
+        if (!string.IsNullOrWhiteSpace(emailOptions.RedirectAllTo))
+        {
+            recipients = [emailOptions.RedirectAllTo];
+        }
+
         var subject = $"{subjectPrefix}: {candidate?.FullName ?? "кандидат"}";
         var body = new StringBuilder()
             .AppendLine(subject)
+            .AppendLine()
+            .AppendLine($"Оригінальні отримувачі: {string.Join(", ", originalRecipients)}")
             .AppendLine()
             .AppendLine($"Кандидат: {candidate?.FullName ?? "Не вказано"}")
             .AppendLine($"Вакансія: {vacancy?.Title ?? "Не вказано"}")
@@ -73,6 +81,8 @@ public class EmailNotificationService(
 
     private async Task DeliverAsync(IReadOnlyCollection<string> recipients, string subject, string body)
     {
+        var outboxReason = "SMTP is disabled or host is empty.";
+
         if (emailOptions.Enabled && !string.IsNullOrWhiteSpace(emailOptions.Host))
         {
             try
@@ -106,14 +116,15 @@ public class EmailNotificationService(
             }
             catch (Exception exception)
             {
+                outboxReason = $"SMTP delivery failed: {exception.GetType().Name}: {exception.Message}";
                 logger.LogWarning(exception, "SMTP delivery failed. Message will be saved to local outbox.");
             }
         }
 
-        await SaveToOutboxAsync(recipients, subject, body);
+        await SaveToOutboxAsync(recipients, subject, body, outboxReason);
     }
 
-    private async Task SaveToOutboxAsync(IReadOnlyCollection<string> recipients, string subject, string body)
+    private async Task SaveToOutboxAsync(IReadOnlyCollection<string> recipients, string subject, string body, string reason)
     {
         var outboxPath = Path.Combine(environment.ContentRootPath, emailOptions.OutboxPath);
         Directory.CreateDirectory(outboxPath);
@@ -124,6 +135,7 @@ public class EmailNotificationService(
             .AppendLine($"To: {string.Join(", ", recipients)}")
             .AppendLine($"Subject: {subject}")
             .AppendLine($"CreatedUtc: {DateTime.UtcNow:O}")
+            .AppendLine($"OutboxReason: {reason}")
             .AppendLine()
             .Append(body)
             .ToString();

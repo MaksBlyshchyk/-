@@ -50,7 +50,7 @@
                             <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id"><span aria-hidden="true">i</span> Деталі</a>
                             @if (User.IsInRole("Admin") || User.IsInRole("Interviewer"))
                             {
-                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id"><span aria-hidden="true">x</span> Видалити</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
                             }
                         </td>
                     </tr>

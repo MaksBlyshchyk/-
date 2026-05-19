@@ -57,7 +57,8 @@ public class CandidatesController(ApplicationDbContext context, IWebHostEnvironm
         Buffer.BlockCopy(preamble, 0, fileBytes, 0, preamble.Length);
         Buffer.BlockCopy(content, 0, fileBytes, preamble.Length, content.Length);
 
-        return File(fileBytes, "text/csv; charset=utf-8", "candidates.csv");
+        var fileName = $"candidates-{DateTime.Today:yyyy-MM-dd}.csv";
+        return File(fileBytes, "text/csv; charset=utf-8", fileName);
     }
 
     public async Task<IActionResult> Details(int? id)

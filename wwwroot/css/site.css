@@ -2449,6 +2449,18 @@ html[data-theme="dark"] .empty-state {
   border-color: rgba(129, 140, 248, 0.34);
 }
 
+@media (max-width: 767.98px) {
+  .has-auth-shell .app-main {
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .has-auth-shell .app-main {
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+}
+
 .candidate-path {
   display: flex;
   flex-wrap: wrap;

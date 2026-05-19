@@ -19,4 +19,6 @@ public class EmailOptions
     public string FromName { get; set; } = "HR Reserve System";
 
     public string OutboxPath { get; set; } = "EmailOutbox";
+
+    public string? RedirectAllTo { get; set; }
 }
