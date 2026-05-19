@@ -85,7 +85,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Interviewer")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id is null)
@@ -104,11 +104,16 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return View(feedback);
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Interviewer")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,InterviewId,RecruiterId,Comment,Score,Recommendation,CreatedAt")] InterviewFeedback feedback)
     {
+        if (User.IsInRole("Interviewer"))
+        {
+            feedback.RecruiterId = await GetCurrentRecruiterId();
+        }
+
         if (id != feedback.Id)
         {
             return NotFound();
@@ -139,7 +144,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Interviewer")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)
@@ -161,7 +166,7 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
         return feedback is null ? NotFound() : View(feedback);
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Interviewer")]
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)

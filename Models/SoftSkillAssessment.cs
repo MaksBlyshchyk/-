@@ -6,6 +6,7 @@ public class SoftSkillAssessment
 {
     public int Id { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Оберіть кандидата.")]
     [Display(Name = "Кандидат")]
     public int CandidateId { get; set; }
 

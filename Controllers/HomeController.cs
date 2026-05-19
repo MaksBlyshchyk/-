@@ -34,6 +34,11 @@ public class HomeController : Controller
             .Select(group => new { Status = group.Key, Count = group.Count() })
             .ToDictionaryAsync(item => item.Status, item => item.Count);
 
+        var softSkillScores = await _context.SoftSkillAssessments
+            .AsNoTracking()
+            .Select(assessment => (assessment.Communication + assessment.Teamwork + assessment.Responsibility + assessment.StressResistance + assessment.Leadership) / 5.0)
+            .ToListAsync();
+
         var dashboard = new DashboardViewModel
         {
             CandidateCount = await _context.Candidates.CountAsync(),
@@ -51,6 +56,7 @@ public class HomeController : Controller
                 .Select(application => application.CandidateId)
                 .Distinct()
                 .CountAsync(),
+            AverageSoftSkillScore = softSkillScores.Count == 0 ? 0 : Math.Round(softSkillScores.Average(), 1),
             RecentCandidates = await _context.Candidates
                 .AsNoTracking()
                 .OrderByDescending(candidate => candidate.CreatedAt)

@@ -6,6 +6,7 @@ public class InterviewFeedback
 {
     public int Id { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Оберіть співбесіду.")]
     [Display(Name = "Співбесіда")]
     public int InterviewId { get; set; }
 

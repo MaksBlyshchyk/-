@@ -13,6 +13,11 @@
                     вакансіями, заявками, співбесідами, відгуками інтерв'юерів і оцінками soft skills.
                 </p>
             </div>
+            <div class="dashboard-actions">
+                <a class="btn btn-outline-primary" href="#er-diagram">ER-діаграма</a>
+                <a class="btn btn-outline-primary" href="#use-case">Use Case</a>
+                <a class="btn btn-outline-secondary" href="#course-materials">Матеріали</a>
+            </div>
         </div>
 
         <div class="row g-3 mb-4">
@@ -90,6 +95,47 @@
                     <div class="col-md-4">
                         <span class="badge text-bg-light text-dark mb-2">Soft Skills</span>
                         <p class="mb-0">Оцінки комунікації, командної роботи, відповідальності, стресостійкості та лідерства.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4" id="course-materials">
+            <div class="col-lg-6">
+                <div class="card h-100" id="er-diagram">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">ER-діаграма</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="candidate-path">
+                            <span>Candidates</span>
+                            <span>Applications</span>
+                            <span>Vacancies</span>
+                            <span>Interviews</span>
+                            <span>InterviewFeedbacks</span>
+                            <span>SoftSkillAssessments</span>
+                            <span>Recruiters</span>
+                        </div>
+                        <p class="text-muted mb-0 mt-3">
+                            Повна Mermaid ER-діаграма та опис зв'язків збережені в <code>Docs/CourseMaterials.md</code>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100" id="use-case">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Use Case</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="candidate-path">
+                            <span>Admin: повний CRUD</span>
+                            <span>Recruiter: кандидати, вакансії, заявки, співбесіди</span>
+                            <span>Interviewer: співбесіди, відгуки, soft skills</span>
+                        </div>
+                        <p class="text-muted mb-0 mt-3">
+                            Детальний сценарій демонстрації, Use Case і опис таблиць також є в <code>Docs/CourseMaterials.md</code>.
+                        </p>
                     </div>
                 </div>
             </div>

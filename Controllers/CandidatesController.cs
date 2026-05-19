@@ -3,6 +3,7 @@ using HRReserveSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace HRReserveSystem.Controllers;
 
@@ -11,20 +12,7 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 {
     public async Task<IActionResult> Index(string? search, int? minExperience)
     {
-        var candidates = context.Candidates.AsNoTracking();
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            candidates = candidates.Where(candidate =>
-                candidate.FullName.Contains(search) ||
-                candidate.Email.Contains(search) ||
-                candidate.Skills.Contains(search));
-        }
-
-        if (minExperience.HasValue)
-        {
-            candidates = candidates.Where(candidate => candidate.ExperienceYears >= minExperience.Value);
-        }
+        var candidates = ApplyFilters(context.Candidates.AsNoTracking(), search, minExperience);
 
         ViewData["CurrentFilter"] = search;
         ViewData["MinExperience"] = minExperience;
@@ -32,6 +20,39 @@ public class CandidatesController(ApplicationDbContext context) : Controller
         return View(await candidates
             .OrderBy(candidate => candidate.FullName)
             .ToListAsync());
+    }
+
+    public async Task<IActionResult> ExportCsv(string? search, int? minExperience)
+    {
+        var candidates = await ApplyFilters(context.Candidates.AsNoTracking(), search, minExperience)
+            .OrderBy(candidate => candidate.FullName)
+            .ToListAsync();
+
+        var csv = new StringBuilder();
+        AppendCsvRow(csv, "Id", "FullName", "Email", "Phone", "Skills", "ExperienceYears", "ResumeFilePath", "ResumeSummary", "CreatedAt");
+
+        foreach (var candidate in candidates)
+        {
+            AppendCsvRow(
+                csv,
+                candidate.Id,
+                candidate.FullName,
+                candidate.Email,
+                candidate.Phone,
+                candidate.Skills,
+                candidate.ExperienceYears,
+                candidate.ResumeFilePath,
+                candidate.ResumeSummary,
+                candidate.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm"));
+        }
+
+        var preamble = Encoding.UTF8.GetPreamble();
+        var content = Encoding.UTF8.GetBytes(csv.ToString());
+        var fileBytes = new byte[preamble.Length + content.Length];
+        Buffer.BlockCopy(preamble, 0, fileBytes, 0, preamble.Length);
+        Buffer.BlockCopy(content, 0, fileBytes, preamble.Length, content.Length);
+
+        return File(fileBytes, "text/csv; charset=utf-8", "candidates.csv");
     }
 
     public async Task<IActionResult> Details(int? id)
@@ -147,5 +168,37 @@ public class CandidatesController(ApplicationDbContext context) : Controller
     private async Task<bool> CandidateExists(int id)
     {
         return await context.Candidates.AnyAsync(item => item.Id == id);
+    }
+
+    private static IQueryable<Candidate> ApplyFilters(IQueryable<Candidate> candidates, string? search, int? minExperience)
+    {
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            candidates = candidates.Where(candidate =>
+                candidate.FullName.Contains(search) ||
+                candidate.Email.Contains(search) ||
+                candidate.Skills.Contains(search));
+        }
+
+        if (minExperience.HasValue)
+        {
+            candidates = candidates.Where(candidate => candidate.ExperienceYears >= minExperience.Value);
+        }
+
+        return candidates;
+    }
+
+    private static void AppendCsvRow(StringBuilder builder, params object?[] values)
+    {
+        builder.AppendLine(string.Join(",", values.Select(EscapeCsv)));
+    }
+
+    private static string EscapeCsv(object? value)
+    {
+        var text = value?.ToString() ?? string.Empty;
+
+        return text.Contains('"') || text.Contains(',') || text.Contains('\r') || text.Contains('\n')
+            ? $"\"{text.Replace("\"", "\"\"")}\""
+            : text;
     }
 }

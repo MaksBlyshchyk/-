@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Деталі кандидата";
+    var averageSoftSkillScore = Model.SoftSkillAssessments.Any()
+        ? Math.Round(Model.SoftSkillAssessments.Average(assessment => assessment.AverageScore), 1)
+        : (double?)null;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -27,6 +30,18 @@
             <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.ResumeSummary) ? "Не додано" : Model.ResumeSummary)</dd>
             <dt class="col-sm-3">Досвід</dt>
             <dd class="col-sm-9">@Model.ExperienceYears р.</dd>
+            <dt class="col-sm-3">Середній soft skills score</dt>
+            <dd class="col-sm-9">
+                @if (averageSoftSkillScore.HasValue)
+                {
+                    <span class="score-badge score-badge-average">@averageSoftSkillScore</span>
+                    <span class="text-muted">/ 10</span>
+                }
+                else
+                {
+                    <span class="text-muted">Оцінку ще не додано</span>
+                }
+            </dd>
             <dt class="col-sm-3">Створено</dt>
             <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
         </dl>
@@ -64,5 +79,45 @@
     else
     {
         <div class="empty-state">У кандидата ще немає заявок.</div>
+    }
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Оцінки soft skills</h2>
+    </div>
+    @if (Model.SoftSkillAssessments.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Комунікація</th>
+                        <th>Команда</th>
+                        <th>Відповідальність</th>
+                        <th>Стрес</th>
+                        <th>Лідерство</th>
+                        <th>Середній бал</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var assessment in Model.SoftSkillAssessments)
+                {
+                    <tr>
+                        <td><span class="score-badge">@assessment.Communication</span></td>
+                        <td><span class="score-badge">@assessment.Teamwork</span></td>
+                        <td><span class="score-badge">@assessment.Responsibility</span></td>
+                        <td><span class="score-badge">@assessment.StressResistance</span></td>
+                        <td><span class="score-badge">@assessment.Leadership</span></td>
+                        <td><span class="score-badge score-badge-average">@assessment.AverageScore</span></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">Для кандидата ще немає оцінок soft skills.</div>
     }
 </div>

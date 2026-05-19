@@ -2386,6 +2386,36 @@ html[data-theme="dark"] .candidate-path span {
   color: #f8fafc;
 }
 
+/* Table action polish: keep CRUD controls readable in the dark theme. */
+.table th:last-child,
+.table td:last-child {
+  padding-right: 1rem;
+}
+
+.table td.text-end.text-nowrap .btn {
+  margin-bottom: 0.18rem;
+  margin-left: 0.18rem;
+}
+
+html[data-theme="dark"] .btn-warning {
+  background-color: #fbbf24;
+  border-color: #f59e0b;
+  color: #111827;
+}
+
+html[data-theme="dark"] .btn-warning:hover,
+html[data-theme="dark"] .btn-warning:focus {
+  background-color: #f59e0b;
+  border-color: #d97706;
+  color: #111827;
+}
+
+@media (max-width: 1399.98px) {
+  .table td.text-end.text-nowrap {
+    white-space: normal !important;
+  }
+}
+
 @media (max-width: 575.98px) {
   .stack-list-item,
   .interview-item {

@@ -18,6 +18,8 @@ public class DashboardViewModel
 
     public int RejectedCandidateCount { get; set; }
 
+    public double AverageSoftSkillScore { get; set; }
+
     public IReadOnlyList<Candidate> RecentCandidates { get; set; } = [];
 
     public IReadOnlyList<Vacancy> RecentVacancies { get; set; } = [];

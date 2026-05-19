@@ -15,9 +15,17 @@
     </div>
     <div class="col-md-4">
         <label asp-for="RecruiterId" class="form-label"></label>
-        <select asp-for="RecruiterId" class="form-select" asp-items="ViewBag.RecruiterId">
-            <option value="">Не вказано</option>
-        </select>
+        @if (User.IsInRole("Admin"))
+        {
+            <select asp-for="RecruiterId" class="form-select" asp-items="ViewBag.RecruiterId">
+                <option value="">Не вказано</option>
+            </select>
+        }
+        else
+        {
+            <input type="hidden" asp-for="RecruiterId" />
+            <input class="form-control" value="Поточний інтерв'юер" disabled />
+        }
         <span asp-validation-for="RecruiterId" class="text-danger"></span>
     </div>
     <div class="col-md-4">

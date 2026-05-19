@@ -6,9 +6,11 @@ public class Application
 {
     public int Id { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Оберіть кандидата.")]
     [Display(Name = "Кандидат")]
     public int CandidateId { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Оберіть вакансію.")]
     [Display(Name = "Вакансія")]
     public int VacancyId { get; set; }
 

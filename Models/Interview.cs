@@ -6,6 +6,7 @@ public class Interview
 {
     public int Id { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Оберіть заявку.")]
     [Display(Name = "Заявка")]
     public int ApplicationId { get; set; }
 
