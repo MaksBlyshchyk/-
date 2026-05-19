@@ -1,13 +1,15 @@
 using HRReserveSystem.Models;
+using HRReserveSystem.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRReserveSystem.Data;
 
 public static class SeedData
 {
-    public static async Task InitializeAsync(ApplicationDbContext context)
+    public static async Task InitializeAsync(ApplicationDbContext context, IdentityRecruiterSyncService identitySync)
     {
         var recruiters = await EnsureRecruitersAsync(context);
+        await identitySync.SyncRecruitersAsync(recruiters);
 
         var databaseHasHrData =
             await context.Candidates.AnyAsync() ||

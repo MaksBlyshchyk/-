@@ -6,7 +6,7 @@
 
 <h1 class="h2 mb-3">Новий кандидат</h1>
 
-<form asp-action="Create" class="row g-3">
+<form asp-action="Create" class="row g-3" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="col-md-6">
         <label asp-for="FullName" class="form-label"></label>
@@ -35,8 +35,9 @@
     </div>
     <div class="col-12">
         <label asp-for="ResumeFilePath" class="form-label"></label>
-        <input asp-for="ResumeFilePath" class="form-control" placeholder="Наприклад: /resumes/ivanenko.pdf" />
-        <div class="form-text">Завантаження PDF не реалізовано: у полі зберігається шлях або назва файлу резюме.</div>
+        <input asp-for="ResumeFilePath" type="hidden" />
+        <input class="form-control" type="file" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" />
+        <div class="form-text">Можна завантажити PDF, DOC або DOCX файл резюме до 5 MB.</div>
         <span asp-validation-for="ResumeFilePath" class="text-danger"></span>
     </div>
     <div class="col-12">

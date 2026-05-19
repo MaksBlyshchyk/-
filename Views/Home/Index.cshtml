@@ -21,6 +21,17 @@
         ["Paused"] = "#f59e0b",
         ["Closed"] = "#ef4444"
     };
+    var canOpenHiringPages = User.IsInRole("Admin") || User.IsInRole("Recruiter");
+    var canOpenInterviewPages = User.IsInRole("Admin") || User.IsInRole("Interviewer");
+    var isAdmin = User.IsInRole("Admin");
+    var candidatesUrl = canOpenHiringPages ? Url.Action("Index", "Candidates") : null;
+    var vacanciesUrl = canOpenHiringPages ? Url.Action("Index", "Vacancies") : null;
+    var applicationsUrl = canOpenHiringPages ? Url.Action("Index", "Applications") : null;
+    var interviewsUrl = Url.Action("Index", "Interviews");
+    var softSkillsUrl = canOpenInterviewPages ? Url.Action("Index", "SoftSkillAssessments") : null;
+    var recruitersUrl = isAdmin ? Url.Action("Index", "Recruiters") : null;
+    var acceptedUrl = canOpenHiringPages ? Url.Action("Index", "Applications", new { status = "Hired" }) : null;
+    var rejectedUrl = canOpenHiringPages ? Url.Action("Index", "Applications", new { status = "Rejected" }) : null;
 }
 
 @functions {
@@ -64,7 +75,7 @@
 </div>
 
 <div class="dashboard-kpi-grid mb-4">
-    <div class="card dashboard-card">
+    <a class="card dashboard-card dashboard-card-link" href="@candidatesUrl" aria-disabled="@(candidatesUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" /></svg></span>
@@ -73,8 +84,8 @@
             <div class="display-6 fw-semibold">@Model.CandidateCount</div>
             <div class="metric-delta text-success">↗ +12 цього тижня</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@vacanciesUrl" aria-disabled="@(vacanciesUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-violet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-9 0h12v12H4V7h4Z" /></svg></span>
@@ -83,8 +94,8 @@
             <div class="display-6 fw-semibold">@Model.VacancyCount</div>
             <div class="metric-delta text-primary">↗ +3 цього тижня</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@applicationsUrl" aria-disabled="@(applicationsUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 13h6M9 17h6" /></svg></span>
@@ -93,8 +104,8 @@
             <div class="display-6 fw-semibold">@Model.ApplicationCount</div>
             <div class="metric-delta text-success">↗ +23 цього тижня</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@interviewsUrl">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-cyan" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v10H8l-3 4V5Z" /></svg></span>
@@ -103,8 +114,8 @@
             <div class="display-6 fw-semibold">@Model.InterviewCount</div>
             <div class="metric-delta text-success">↗ +5 цього тижня</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@softSkillsUrl" aria-disabled="@(softSkillsUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-success" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.9-5.4 2.9 1-6-4.4-4.3 6.1-.9z" /></svg></span>
@@ -113,8 +124,8 @@
             <div class="display-6 fw-semibold">@Model.AverageSoftSkillScore</div>
             <div class="metric-delta text-muted">Середній бал / 10</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@recruitersUrl" aria-disabled="@(recruitersUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-violet" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm6-1a3 3 0 1 0 0-6M3 20a6 6 0 0 1 12 0m3 0a6 6 0 0 0-3-5.2" /></svg></span>
@@ -123,8 +134,8 @@
             <div class="display-6 fw-semibold">@Model.RecruiterCount</div>
             <div class="metric-delta text-muted">Активні</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@acceptedUrl" aria-disabled="@(acceptedUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-success" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span>
@@ -133,8 +144,8 @@
             <div class="display-6 fw-semibold">@Model.AcceptedCandidateCount</div>
             <div class="metric-delta text-success">↗ +3 цього тижня</div>
         </div>
-    </div>
-    <div class="card dashboard-card">
+    </a>
+    <a class="card dashboard-card dashboard-card-link" href="@rejectedUrl" aria-disabled="@(rejectedUrl is null ? "true" : null)">
         <div class="card-body">
             <div class="dashboard-card-head">
                 <span class="dashboard-icon dashboard-icon-danger" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg></span>
@@ -143,7 +154,7 @@
             <div class="display-6 fw-semibold">@Model.RejectedCandidateCount</div>
             <div class="metric-delta text-primary">↗ +4 цього тижня</div>
         </div>
-    </div>
+    </a>
 </div>
 
 <div class="dashboard-bento-grid">

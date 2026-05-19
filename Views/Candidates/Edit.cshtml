@@ -6,7 +6,7 @@
 
 <h1 class="h2 mb-3">Редагувати кандидата</h1>
 
-<form asp-action="Edit" class="row g-3">
+<form asp-action="Edit" class="row g-3" enctype="multipart/form-data">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="CreatedAt" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -37,8 +37,19 @@
     </div>
     <div class="col-12">
         <label asp-for="ResumeFilePath" class="form-label"></label>
-        <input asp-for="ResumeFilePath" class="form-control" placeholder="Наприклад: /resumes/ivanenko.pdf" />
-        <div class="form-text">Завантаження PDF не реалізовано: у полі зберігається шлях або назва файлу резюме.</div>
+        <input asp-for="ResumeFilePath" type="hidden" />
+        @if (!string.IsNullOrWhiteSpace(Model.ResumeFilePath))
+        {
+            <div class="resume-current-file mb-2">
+                <a class="btn btn-sm btn-outline-primary" href="@Model.ResumeFilePath" target="_blank" rel="noopener">Відкрити поточне резюме</a>
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" id="removeResume" name="removeResume" value="true" />
+                    <label class="form-check-label" for="removeResume">Видалити поточний файл резюме</label>
+                </div>
+            </div>
+        }
+        <input class="form-control" type="file" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" />
+        <div class="form-text">Новий PDF, DOC або DOCX файл до 5 MB замінить поточне резюме.</div>
         <span asp-validation-for="ResumeFilePath" class="text-danger"></span>
     </div>
     <div class="col-12">

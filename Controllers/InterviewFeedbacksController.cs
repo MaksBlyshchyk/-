@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using HRReserveSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -214,7 +215,8 @@ public class InterviewFeedbacksController(ApplicationDbContext context) : Contro
 
     private async Task<int?> GetCurrentRecruiterId()
     {
-        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var idValue = User.FindFirstValue(IdentityRecruiterSyncService.RecruiterIdClaim)
+            ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
         return int.TryParse(idValue, out var id) && await context.Recruiters.AnyAsync(recruiter => recruiter.Id == id)
             ? id
             : null;

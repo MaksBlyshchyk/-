@@ -1,14 +1,15 @@
-using System.Security.Claims;
 using HRReserveSystem.Services;
 using HRReserveSystem.ViewModels;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRReserveSystem.Controllers;
 
-public class AccountController(DemoUserService demoUserService) : Controller
+public class AccountController(
+    DemoUserService demoUserService,
+    SignInManager<IdentityUser> signInManager,
+    UserManager<IdentityUser> userManager) : Controller
 {
     [AllowAnonymous]
     public async Task<IActionResult> Login(string? returnUrl = null)
@@ -34,30 +35,20 @@ public class AccountController(DemoUserService demoUserService) : Controller
             return View(model);
         }
 
-        var user = await demoUserService.ValidateUserAsync(model.Login, model.Password);
+        var user = await userManager.FindByNameAsync(model.Login.Trim())
+            ?? await userManager.FindByEmailAsync(model.Login.Trim());
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, "Невірний логін або пароль.");
             return View(model);
         }
 
-        var claims = new List<Claim>
+        var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+        if (!result.Succeeded)
         {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Login),
-            new(ClaimTypes.Role, user.Role),
-            new("DisplayName", user.FullName)
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-        var properties = new AuthenticationProperties
-        {
-            IsPersistent = model.RememberMe,
-            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(model.RememberMe ? 8 : 2)
-        };
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+            ModelState.AddModelError(string.Empty, "Невірний логін або пароль.");
+            return View(model);
+        }
 
         if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
         {
@@ -70,7 +61,7 @@ public class AccountController(DemoUserService demoUserService) : Controller
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await signInManager.SignOutAsync();
         return RedirectToAction(nameof(Login));
     }
 

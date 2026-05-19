@@ -1,0 +1,77 @@
+@model IEnumerable<Interview>
+
+@{
+    ViewData["Title"] = "Календар співбесід";
+    var days = Model
+        .OrderBy(interview => interview.InterviewDate)
+        .GroupBy(interview => interview.InterviewDate.Date)
+        .ToList();
+    var today = DateTime.Today;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+    <div>
+        <h1 class="h2 mb-1">Календар співбесід</h1>
+        <p class="text-muted mb-0">План співбесід за датами, кандидатами, вакансіями, типом і результатом.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-secondary" asp-action="Index">Список</a>
+        <a class="btn btn-outline-primary" asp-action="ExportIcs">Експорт .ics</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+        {
+            <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Запланувати</a>
+        }
+    </div>
+</div>
+
+@if (days.Any())
+{
+    <div class="interview-calendar">
+        @foreach (var day in days)
+        {
+            var dayClass = day.Key == today ? "calendar-day calendar-day-today" : "calendar-day";
+
+            <section class="@dayClass">
+                <div class="calendar-day-head">
+                    <div>
+                        <span class="calendar-weekday">@day.Key.ToString("dddd")</span>
+                        <h2 class="h5 mb-0">@day.Key.ToString("dd.MM.yyyy")</h2>
+                    </div>
+                    <span class="badge text-bg-info text-dark">@day.Count()</span>
+                </div>
+
+                <div class="calendar-events">
+                    @foreach (var interview in day)
+                    {
+                        <article class="calendar-event">
+                            <div class="calendar-event-time">@interview.InterviewDate.ToString("HH:mm")</div>
+                            <div class="calendar-event-body">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                    <strong>@interview.Application?.Candidate?.FullName</strong>
+                                    <span class="badge @HrOptions.InterviewResultBadge(interview.Result)">@interview.Result</span>
+                                </div>
+                                <div class="text-muted">@interview.Application?.Vacancy?.Title</div>
+                                <div class="small text-muted">@interview.InterviewType · @(interview.Recruiter?.FullName ?? "Не призначено")</div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a class="btn btn-sm btn-outline-primary" asp-action="ExportIcs" asp-route-id="@interview.Id">.ics</a>
+                                <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@interview.Id">Деталі</a>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <h2 class="h5">Співбесіди ще не заплановані</h2>
+        <p class="text-muted mb-3">Календар буде заповнюватися автоматично після створення співбесід.</p>
+        @if (User.IsInRole("Admin") || User.IsInRole("Recruiter"))
+        {
+            <a class="btn btn-success" asp-action="Create"><span aria-hidden="true">+</span> Запланувати співбесіду</a>
+        }
+    </div>
+}

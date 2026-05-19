@@ -22,6 +22,10 @@ public class Application
     [Display(Name = "Дата подачі")]
     public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
 
+    [StringLength(2000)]
+    [Display(Name = "Коментар рекрутера")]
+    public string? RecruiterComment { get; set; }
+
     public Candidate? Candidate { get; set; }
 
     public Vacancy? Vacancy { get; set; }

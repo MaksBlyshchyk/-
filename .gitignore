@@ -4,5 +4,6 @@ hrreserve.db
 hrreserve.db-shm
 hrreserve.db-wal
 DataProtectionKeys/
+EmailOutbox/
 *.user
 *.suo

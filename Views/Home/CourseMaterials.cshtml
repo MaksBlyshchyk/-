@@ -1,0 +1,164 @@
+@{
+    ViewData["Title"] = "Матеріали курсової";
+}
+
+<div class="dashboard-hero mb-4">
+    <div class="dashboard-hero-copy">
+        <span class="badge text-bg-primary mb-2">Варіант №26</span>
+        <h1 class="h2 mb-2">Матеріали курсової роботи</h1>
+        <p class="text-muted mb-0">
+            Система управління кадровим резервом: база кандидатів, вакансії, заявки, співбесіди,
+            відгуки інтерв'юерів та оцінювання soft skills.
+        </p>
+    </div>
+    <div class="dashboard-actions">
+        <a class="btn btn-outline-primary" href="#er-diagram">ER-діаграма</a>
+        <a class="btn btn-outline-primary" href="#use-case">Use Case</a>
+        <a class="btn btn-outline-secondary" href="#demo-scenario">Сценарій</a>
+        <a class="btn btn-secondary" asp-controller="Home" asp-action="About">Назад</a>
+    </div>
+</div>
+
+<section class="card mb-4" id="er-diagram">
+    <div class="card-header">
+        <h2 class="h5 mb-0">ER-діаграма та зв'язки</h2>
+    </div>
+    <div class="card-body">
+        <div class="candidate-path mb-3">
+            <span>Candidates</span>
+            <span>Applications</span>
+            <span>Vacancies</span>
+            <span>Interviews</span>
+            <span>InterviewFeedbacks</span>
+            <span>SoftSkillAssessments</span>
+            <span>Recruiters</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Зв'язок</th>
+                        <th>Опис</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Candidate 1:N Applications</td>
+                        <td>Один кандидат може мати кілька заявок на різні вакансії.</td>
+                    </tr>
+                    <tr>
+                        <td>Vacancy 1:N Applications</td>
+                        <td>Одна вакансія може мати багато заявок кандидатів.</td>
+                    </tr>
+                    <tr>
+                        <td>Application 1:N Interviews</td>
+                        <td>Для однієї заявки можна провести кілька співбесід.</td>
+                    </tr>
+                    <tr>
+                        <td>Interview 1:N InterviewFeedbacks</td>
+                        <td>Після співбесіди інтерв'юери залишають відгуки та рекомендації.</td>
+                    </tr>
+                    <tr>
+                        <td>Candidate 1:N SoftSkillAssessments</td>
+                        <td>Для кандидата зберігаються оцінки комунікації, командної роботи та інших soft skills.</td>
+                    </tr>
+                    <tr>
+                        <td>Recruiter 1:N Interviews / Feedbacks</td>
+                        <td>Рекрутер або інтерв'юер пов'язаний із проведеними співбесідами та відгуками.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="card mb-4" id="use-case">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Use Case</h2>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-lg-4">
+                <div class="alert alert-light h-100 mb-0">
+                    <h3 class="h6">Admin</h3>
+                    <p class="mb-0">Повний доступ до Dashboard, кандидатів, вакансій, заявок, співбесід, відгуків, soft skills і рекрутерів.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="alert alert-light h-100 mb-0">
+                    <h3 class="h6">Recruiter</h3>
+                    <p class="mb-0">Працює з кандидатами, вакансіями, заявками та співбесідами. Не має доступу до керування рекрутерами.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="alert alert-light h-100 mb-0">
+                    <h3 class="h6">Interviewer</h3>
+                    <p class="mb-0">Переглядає співбесіди, додає відгуки та оцінює soft skills кандидатів.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card mb-4" id="database-tables">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Опис таблиць бази даних</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Таблиця</th>
+                    <th>Призначення</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Candidates</td>
+                    <td>Кандидати кадрового резерву, контакти, навички, досвід, шлях до резюме та коротке резюме.</td>
+                </tr>
+                <tr>
+                    <td>Vacancies</td>
+                    <td>Вакансії, вимоги, зарплатний діапазон і статус Open / Paused / Closed.</td>
+                </tr>
+                <tr>
+                    <td>Applications</td>
+                    <td>Заявки кандидатів на вакансії та етап відбору New / Screening / Interview / TestTask / Offer / Hired / Rejected.</td>
+                </tr>
+                <tr>
+                    <td>Interviews</td>
+                    <td>Історія та план співбесід із типом HR / Technical / Final і результатом Pending / Passed / Failed.</td>
+                </tr>
+                <tr>
+                    <td>InterviewFeedbacks</td>
+                    <td>Коментарі інтерв'юерів, оцінка Score і рекомендація Hire / Maybe / Reject.</td>
+                </tr>
+                <tr>
+                    <td>SoftSkillAssessments</td>
+                    <td>Оцінки soft skills від 1 до 10 та розрахунок середнього бала.</td>
+                </tr>
+                <tr>
+                    <td>Recruiters</td>
+                    <td>Демо-користувачі системи, логіни, паролі та ролі Admin / Recruiter / Interviewer.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="card mb-4" id="demo-scenario">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Сценарій демонстрації</h2>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li>Запустити проєкт командами <code>dotnet restore</code>, <code>dotnet build</code>, <code>dotnet run</code>.</li>
+            <li>Увійти як <code>admin / admin123</code> і показати Dashboard, статистику та всі CRUD-розділи.</li>
+            <li>Показати Candidates: пошук, фільтр за досвідом, CSV export і деталі кандидата із soft skills score.</li>
+            <li>Показати Vacancies, Applications та Interviews із фільтрами за статусом, етапом, типом і результатом.</li>
+            <li>Увійти як <code>recruiter / recruiter123</code> і показати доступ тільки до робочих розділів рекрутера.</li>
+            <li>Увійти як <code>interviewer / interviewer123</code> і показати Interviews, InterviewFeedbacks та SoftSkillAssessments.</li>
+            <li>Відкрити цю сторінку матеріалів і показати ER-зв'язки, Use Case, таблиці БД та сценарій демонстрації.</li>
+        </ol>
+    </div>
+</section>

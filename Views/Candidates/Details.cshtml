@@ -25,7 +25,17 @@
             <dt class="col-sm-3">Навички</dt>
             <dd class="col-sm-9">@Model.Skills</dd>
             <dt class="col-sm-3">Файл резюме</dt>
-            <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.ResumeFilePath) ? "Не додано" : Model.ResumeFilePath)</dd>
+            <dd class="col-sm-9">
+                @if (string.IsNullOrWhiteSpace(Model.ResumeFilePath))
+                {
+                    <span class="text-muted">Не додано</span>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-outline-primary" href="@Model.ResumeFilePath" target="_blank" rel="noopener">Відкрити резюме</a>
+                    <span class="text-muted ms-2">@Model.ResumeFilePath</span>
+                }
+            </dd>
             <dt class="col-sm-3">Коротке резюме</dt>
             <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.ResumeSummary) ? "Не додано" : Model.ResumeSummary)</dd>
             <dt class="col-sm-3">Досвід</dt>

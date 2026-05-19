@@ -91,6 +91,12 @@ public class HomeController : Controller
         return View();
     }
 
+    [AllowAnonymous]
+    public IActionResult CourseMaterials()
+    {
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();

@@ -1,5 +1,6 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using HRReserveSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HRReserveSystem.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class RecruitersController(ApplicationDbContext context) : Controller
+public class RecruitersController(ApplicationDbContext context, IdentityRecruiterSyncService identitySync) : Controller
 {
     public async Task<IActionResult> Index()
     {
@@ -51,6 +52,17 @@ public class RecruitersController(ApplicationDbContext context) : Controller
         context.Recruiters.Add(recruiter);
         await context.SaveChangesAsync();
 
+        var identityErrors = await identitySync.SyncRecruiterAsync(recruiter);
+        if (identityErrors.Count > 0)
+        {
+            foreach (var error in identityErrors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+
+            return View(recruiter);
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -83,6 +95,17 @@ public class RecruitersController(ApplicationDbContext context) : Controller
         {
             context.Update(recruiter);
             await context.SaveChangesAsync();
+
+            var identityErrors = await identitySync.SyncRecruiterAsync(recruiter);
+            if (identityErrors.Count > 0)
+            {
+                foreach (var error in identityErrors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+
+                return View(recruiter);
+            }
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -121,6 +144,7 @@ public class RecruitersController(ApplicationDbContext context) : Controller
         {
             context.Recruiters.Remove(recruiter);
             await context.SaveChangesAsync();
+            await identitySync.DeleteRecruiterAsync(id);
         }
 
         return RedirectToAction(nameof(Index));

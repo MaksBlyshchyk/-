@@ -24,6 +24,7 @@
                         <th>Автор</th>
                         <th>Оцінка</th>
                         <th>Рекомендація</th>
+                        <th>Коментар</th>
                         <th>Створено</th>
                         <th class="text-end">Дії</th>
                     </tr>
@@ -39,6 +40,7 @@
                         <td>@(item.Recruiter?.FullName ?? "Не вказано")</td>
                         <td><span class="badge text-bg-info text-dark">@item.Score/10</span></td>
                         <td><span class="badge @badgeClass">@item.Recommendation</span></td>
+                        <td class="table-comment-cell">@item.Comment</td>
                         <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
                         <td class="text-end text-nowrap">
                             @if (User.IsInRole("Admin") || User.IsInRole("Interviewer"))

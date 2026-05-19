@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using System.Text;
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
+using HRReserveSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HRReserveSystem.Controllers;
 
 [Authorize(Roles = "Admin,Recruiter,Interviewer")]
-public class InterviewsController(ApplicationDbContext context) : Controller
+public class InterviewsController(ApplicationDbContext context, IEmailNotificationService emailNotificationService) : Controller
 {
     public async Task<IActionResult> Index(string? interviewType, string? result)
     {
@@ -39,6 +41,49 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         return View(await interviews
             .OrderByDescending(interview => interview.InterviewDate)
             .ToListAsync());
+    }
+
+    public async Task<IActionResult> Calendar()
+    {
+        var interviews = await context.Interviews
+            .AsNoTracking()
+            .Include(interview => interview.Application)
+                .ThenInclude(application => application!.Candidate)
+            .Include(interview => interview.Application)
+                .ThenInclude(application => application!.Vacancy)
+            .Include(interview => interview.Recruiter)
+            .OrderBy(interview => interview.InterviewDate)
+            .ToListAsync();
+
+        return View(interviews);
+    }
+
+    public async Task<IActionResult> ExportIcs(int? id = null)
+    {
+        IQueryable<Interview> interviews = context.Interviews
+            .AsNoTracking()
+            .Include(interview => interview.Application)
+                .ThenInclude(application => application!.Candidate)
+            .Include(interview => interview.Application)
+                .ThenInclude(application => application!.Vacancy)
+            .Include(interview => interview.Recruiter);
+
+        if (id.HasValue)
+        {
+            interviews = interviews.Where(interview => interview.Id == id.Value);
+        }
+
+        var items = await interviews
+            .OrderBy(interview => interview.InterviewDate)
+            .ToListAsync();
+
+        if (id.HasValue && items.Count == 0)
+        {
+            return NotFound();
+        }
+
+        var fileName = id.HasValue ? $"interview-{id.Value}.ics" : "interviews-calendar.ics";
+        return File(Encoding.UTF8.GetBytes(BuildIcsCalendar(items)), "text/calendar; charset=utf-8", fileName);
     }
 
     public async Task<IActionResult> Details(int? id)
@@ -84,6 +129,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
 
         context.Add(interview);
         await context.SaveChangesAsync();
+        await emailNotificationService.SendInterviewScheduledAsync(interview.Id);
 
         return RedirectToAction(nameof(Index));
     }
@@ -128,6 +174,7 @@ public class InterviewsController(ApplicationDbContext context) : Controller
         {
             context.Update(interview);
             await context.SaveChangesAsync();
+            await emailNotificationService.SendInterviewUpdatedAsync(interview.Id);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -208,7 +255,8 @@ public class InterviewsController(ApplicationDbContext context) : Controller
 
     private async Task<int?> GetCurrentRecruiterId()
     {
-        var idValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var idValue = User.FindFirstValue(IdentityRecruiterSyncService.RecruiterIdClaim)
+            ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
         return int.TryParse(idValue, out var id) && await context.Recruiters.AnyAsync(recruiter => recruiter.Id == id)
             ? id
             : null;
@@ -217,5 +265,54 @@ public class InterviewsController(ApplicationDbContext context) : Controller
     private async Task<bool> InterviewExists(int id)
     {
         return await context.Interviews.AnyAsync(item => item.Id == id);
+    }
+
+    private static string BuildIcsCalendar(IEnumerable<Interview> interviews)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("BEGIN:VCALENDAR");
+        builder.AppendLine("VERSION:2.0");
+        builder.AppendLine("PRODID:-//HRReserveSystem//Interview Calendar//UK");
+        builder.AppendLine("CALSCALE:GREGORIAN");
+        builder.AppendLine("METHOD:PUBLISH");
+
+        foreach (var interview in interviews)
+        {
+            var start = DateTime.SpecifyKind(interview.InterviewDate, DateTimeKind.Local).ToUniversalTime();
+            var end = start.AddHours(1);
+            var candidate = interview.Application?.Candidate?.FullName ?? "Кандидат";
+            var vacancy = interview.Application?.Vacancy?.Title ?? "Вакансія";
+            var recruiter = interview.Recruiter?.FullName ?? "Не призначено";
+            var summary = $"{interview.InterviewType}: {candidate} - {vacancy}";
+            var description = $"Результат: {interview.Result}\\nРекрутер: {recruiter}\\nНотатки: {interview.Notes}";
+
+            builder.AppendLine("BEGIN:VEVENT");
+            builder.AppendLine($"UID:hrreserve-interview-{interview.Id}@hrreserve.local");
+            builder.AppendLine($"DTSTAMP:{FormatIcsDate(DateTime.UtcNow)}");
+            builder.AppendLine($"DTSTART:{FormatIcsDate(start)}");
+            builder.AppendLine($"DTEND:{FormatIcsDate(end)}");
+            builder.AppendLine($"SUMMARY:{EscapeIcsText(summary)}");
+            builder.AppendLine($"DESCRIPTION:{EscapeIcsText(description)}");
+            builder.AppendLine("LOCATION:HRReserveSystem");
+            builder.AppendLine("END:VEVENT");
+        }
+
+        builder.AppendLine("END:VCALENDAR");
+        return builder.ToString();
+    }
+
+    private static string FormatIcsDate(DateTime value)
+    {
+        return value.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'");
+    }
+
+    private static string EscapeIcsText(string? value)
+    {
+        return (value ?? string.Empty)
+            .Replace("\\", "\\\\")
+            .Replace(";", "\\;")
+            .Replace(",", "\\,")
+            .Replace("\r\n", "\\n")
+            .Replace("\n", "\\n");
     }
 }

@@ -7,7 +7,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h2 mb-0">Відгук #@Model.Id</h1>
     <div class="d-flex gap-2">
-        @if (User.IsInRole("Admin"))
+        @if (User.IsInRole("Admin") || User.IsInRole("Interviewer"))
         {
             <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
         }

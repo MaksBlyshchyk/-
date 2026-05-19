@@ -37,6 +37,7 @@
                         <th>Кандидат</th>
                         <th>Вакансія</th>
                         <th>Статус</th>
+                        <th>Коментар</th>
                         <th>Дата подачі</th>
                         <th class="text-end">Дії</th>
                     </tr>
@@ -50,6 +51,7 @@
                         <td>@item.Candidate?.FullName</td>
                         <td>@item.Vacancy?.Title</td>
                         <td><span class="badge @badgeClass">@item.Status</span></td>
+                        <td class="table-comment-cell">@(string.IsNullOrWhiteSpace(item.RecruiterComment) ? "—" : item.RecruiterComment)</td>
                         <td>@item.AppliedAt.ToLocalTime().ToString("g")</td>
                         <td class="text-end text-nowrap">
                             <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id"><span aria-hidden="true">E</span> Редагувати</a>

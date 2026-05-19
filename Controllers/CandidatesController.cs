@@ -1,6 +1,8 @@
 using HRReserveSystem.Data;
 using HRReserveSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -8,8 +10,11 @@ using System.Text;
 namespace HRReserveSystem.Controllers;
 
 [Authorize(Roles = "Admin,Recruiter")]
-public class CandidatesController(ApplicationDbContext context) : Controller
+public class CandidatesController(ApplicationDbContext context, IWebHostEnvironment environment) : Controller
 {
+    private const long MaxResumeFileSize = 5 * 1024 * 1024;
+    private static readonly string[] AllowedResumeExtensions = [".pdf", ".doc", ".docx"];
+
     public async Task<IActionResult> Index(string? search, int? minExperience)
     {
         var candidates = ApplyFilters(context.Candidates.AsNoTracking(), search, minExperience);
@@ -79,11 +84,19 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears")] Candidate candidate)
+    public async Task<IActionResult> Create([Bind("FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears")] Candidate candidate, IFormFile? resumeFile)
     {
+        ValidateResumeFile(resumeFile);
+
         if (!ModelState.IsValid)
         {
             return View(candidate);
+        }
+
+        var uploadedResumePath = await SaveResumeFileAsync(resumeFile);
+        if (!string.IsNullOrWhiteSpace(uploadedResumePath))
+        {
+            candidate.ResumeFilePath = uploadedResumePath;
         }
 
         candidate.CreatedAt = DateTime.UtcNow;
@@ -106,12 +119,14 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears,CreatedAt")] Candidate candidate)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Phone,Skills,ResumeFilePath,ResumeSummary,ExperienceYears,CreatedAt")] Candidate candidate, IFormFile? resumeFile, bool removeResume = false)
     {
         if (id != candidate.Id)
         {
             return NotFound();
         }
+
+        ValidateResumeFile(resumeFile);
 
         if (!ModelState.IsValid)
         {
@@ -120,6 +135,25 @@ public class CandidatesController(ApplicationDbContext context) : Controller
 
         try
         {
+            var oldResumePath = await context.Candidates
+                .AsNoTracking()
+                .Where(item => item.Id == id)
+                .Select(item => item.ResumeFilePath)
+                .FirstOrDefaultAsync();
+
+            if (removeResume)
+            {
+                DeleteStoredResume(oldResumePath);
+                candidate.ResumeFilePath = null;
+            }
+
+            var uploadedResumePath = await SaveResumeFileAsync(resumeFile);
+            if (!string.IsNullOrWhiteSpace(uploadedResumePath))
+            {
+                DeleteStoredResume(oldResumePath);
+                candidate.ResumeFilePath = uploadedResumePath;
+            }
+
             context.Update(candidate);
             await context.SaveChangesAsync();
         }
@@ -160,6 +194,7 @@ public class CandidatesController(ApplicationDbContext context) : Controller
         {
             context.Candidates.Remove(candidate);
             await context.SaveChangesAsync();
+            DeleteStoredResume(candidate.ResumeFilePath);
         }
 
         return RedirectToAction(nameof(Index));
@@ -200,5 +235,59 @@ public class CandidatesController(ApplicationDbContext context) : Controller
         return text.Contains('"') || text.Contains(',') || text.Contains('\r') || text.Contains('\n')
             ? $"\"{text.Replace("\"", "\"\"")}\""
             : text;
+    }
+
+    private void ValidateResumeFile(IFormFile? resumeFile)
+    {
+        if (resumeFile is null || resumeFile.Length == 0)
+        {
+            return;
+        }
+
+        var extension = Path.GetExtension(resumeFile.FileName).ToLowerInvariant();
+        if (!AllowedResumeExtensions.Contains(extension))
+        {
+            ModelState.AddModelError(nameof(Candidate.ResumeFilePath), "Дозволені формати резюме: PDF, DOC, DOCX.");
+        }
+
+        if (resumeFile.Length > MaxResumeFileSize)
+        {
+            ModelState.AddModelError(nameof(Candidate.ResumeFilePath), "Файл резюме має бути не більшим за 5 MB.");
+        }
+    }
+
+    private async Task<string?> SaveResumeFileAsync(IFormFile? resumeFile)
+    {
+        if (resumeFile is null || resumeFile.Length == 0)
+        {
+            return null;
+        }
+
+        var extension = Path.GetExtension(resumeFile.FileName).ToLowerInvariant();
+        var uploadsPath = Path.Combine(environment.WebRootPath, "uploads", "resumes");
+        Directory.CreateDirectory(uploadsPath);
+
+        var fileName = $"{Guid.NewGuid():N}{extension}";
+        var physicalPath = Path.Combine(uploadsPath, fileName);
+
+        await using var stream = System.IO.File.Create(physicalPath);
+        await resumeFile.CopyToAsync(stream);
+
+        return $"/uploads/resumes/{fileName}";
+    }
+
+    private void DeleteStoredResume(string? resumePath)
+    {
+        if (string.IsNullOrWhiteSpace(resumePath) || !resumePath.StartsWith("/uploads/resumes/", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var fileName = Path.GetFileName(resumePath);
+        var physicalPath = Path.Combine(environment.WebRootPath, "uploads", "resumes", fileName);
+        if (System.IO.File.Exists(physicalPath))
+        {
+            System.IO.File.Delete(physicalPath);
+        }
     }
 }

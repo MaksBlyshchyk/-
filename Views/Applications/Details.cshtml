@@ -21,6 +21,8 @@
     <dd class="col-sm-9"><span class="badge @HrOptions.ApplicationStatusBadge(Model.Status)">@Model.Status</span></dd>
     <dt class="col-sm-3">Дата подачі</dt>
     <dd class="col-sm-9">@Model.AppliedAt.ToLocalTime().ToString("g")</dd>
+    <dt class="col-sm-3">Коментар рекрутера</dt>
+    <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.RecruiterComment) ? "Не додано" : Model.RecruiterComment)</dd>
 </dl>
 
 <h2 class="h5 mt-4">Співбесіди</h2>
